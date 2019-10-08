@@ -1,0 +1,13 @@
+version: '3.3'
+services:
+  postgres:
+    image: "postgres:12.0"
+    restart: unless-stopped
+    ports:
+      - "${DB_PORT}:5432"
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASS}
+      POSTGRES_USER: kamko-dp
+      POSTGRES_DB: dp
+    volumes:
+      - ./data:/var/lib/postgresql/data
