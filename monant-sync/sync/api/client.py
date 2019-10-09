@@ -3,7 +3,7 @@ import itertools
 from .auth import MonantAuth
 
 
-class MonantClient:
+class ApiClient:
 
     def __init__(self, base_url, auth):
         self.auth = auth
@@ -39,4 +39,4 @@ class MonantClient:
 
 def client(username, password):
     auth = MonantAuth(username=username, password=password)
-    return MonantClient(base_url='https://api.monant.fiit.stuba.sk/', auth=auth)
+    return ApiClient(base_url='https://api.monant.fiit.stuba.sk/', auth=auth)
