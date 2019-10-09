@@ -12,20 +12,20 @@ class MonantClient:
         if params is None:
             params = {}
 
-        return rq.get(url, params=params, auth=self.auth)
+        return rq.get(url, params=params, auth=self.auth).json()
 
     def post(self, url, json=None):
         if json is None:
             json = {}
 
-        return rq.post(url, json=json, auth=self.auth)
+        return rq.post(url, json=json, auth=self.auth).json()
 
     def get_paginated(self, url, content_key, start_from=1, until=None, size=10):
         for i in itertools.count(start_from):
             page = self.get(url, params={
                 'page': i,
                 'size': size
-            }).json()
+            })
 
             yield page[content_key]
 
