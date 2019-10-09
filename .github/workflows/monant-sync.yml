@@ -1,0 +1,24 @@
+name: monant-sync build
+
+on:
+  push:
+    paths:
+    - 'monant-sync/**'
+
+jobs:
+
+  build:
+ 
+    runs-on: ubuntu-latest
+ 
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Build image and publish
+      uses: elgohr/Publish-Docker-Github-Action@master
+      with:
+        name: kamko/monant-sync
+        username: ${{ secrets.DOCKER_HUB_USERNAME }}
+        password: ${{ secrets.DOCKER_HUB_TOKEN }}
+        workdir: monant-sync
+        snapshot: true
