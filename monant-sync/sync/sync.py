@@ -1,5 +1,5 @@
 import os
-from auth import client
+from api.client import client
 
 r = client(username=os.environ['MONANT_AUTH_USERNAME'],
            password=os.environ['MONANT_AUTH_PASSWORD'])
