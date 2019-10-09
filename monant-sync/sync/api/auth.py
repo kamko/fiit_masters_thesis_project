@@ -4,11 +4,12 @@ from requests.auth import AuthBase
 
 class MonantAuth(AuthBase):
 
-    def __init__(self, username, password):
+    def __init__(self, base_url, username, password):
+        self.base_url = base_url
         self.token = self._get_token(username, password)
 
     def _get_token(self, username, password):
-        res = rq.post('https://api.monant.fiit.stuba.sk/auth',
+        res = rq.post(self.base_url + 'auth',
                       json={
                           'username': username,
                           'password': password

@@ -38,5 +38,10 @@ class ApiClient:
 
 
 def client(username, password):
-    auth = MonantAuth(username=username, password=password)
+    auth = MonantAuth(
+        base_url='https://api.monant.fiit.stuba.sk/',
+        username=username,
+        password=password
+    )
+
     return ApiClient(base_url='https://api.monant.fiit.stuba.sk/', auth=auth)
