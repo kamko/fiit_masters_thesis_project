@@ -6,7 +6,7 @@ from util import foreach
 
 def articles_iterator(api_client, start_from=1, until=None, size=100):
     return api_client.get_paginated(
-        url='https://api.monant.fiit.stuba.sk/v1/articles',
+        url='v1/articles',
         content_key="articles",
         start_from=start_from,
         until=until,
