@@ -1,5 +1,6 @@
 import requests as rq
 from requests.auth import AuthBase
+import itertools
 
 
 class MonantAuth(AuthBase):
@@ -15,7 +16,7 @@ class MonantAuth(AuthBase):
                       })
 
         json_res = res.json()
-        return json_res.data['access_token']
+        return json_res['access_token']
 
     def __call__(self, r):
         r.headers['Authorization'] = f'JWT {self.token}'
@@ -38,6 +39,21 @@ class MonantClient:
             json = {}
 
         return rq.post(url, json=json, auth=self.auth)
+
+    def get_paginated(self, url, content_key, start_from=1, until=None, size=10):
+        for i in itertools.count(start_from):
+            page = self.get(url, params={
+                'page': i,
+                'size': size
+            }).json()
+
+            yield page[content_key]
+
+            if page['pagination']['has_next'] is False:
+                break
+
+            if until is not None and i >= until:
+                break
 
 
 def client(username, password):
