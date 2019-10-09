@@ -5,7 +5,7 @@ from .auth import MonantAuth
 
 class MonantClient:
 
-    def __init__(self, base_url='https://api.monant.fiit.stuba.sk/', auth):
+    def __init__(self, base_url, auth):
         self.auth = auth
         self.base_url = base_url
 
@@ -39,4 +39,4 @@ class MonantClient:
 
 def client(username, password):
     auth = MonantAuth(username=username, password=password)
-    return MonantClient(auth=auth)
+    return MonantClient(base_url='https://api.monant.fiit.stuba.sk/', auth=auth)
