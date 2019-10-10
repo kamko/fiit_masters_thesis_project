@@ -2,15 +2,17 @@ import os
 import click
 from api.client import create_client
 from db import create_all_tables, setup_db_engine
-from core.sync import fetch_all_data as sync_fetch
+from core.sync import fetch
 
 db_engine = setup_db_engine(uri=os.environ['POSTGRESQL_URI'])
 api_client = create_client(username=os.environ['MONANT_AUTH_USERNAME'],
-                                 password=os.environ['MONANT_AUTH_PASSWORD'])
+                           password=os.environ['MONANT_AUTH_PASSWORD'])
+
 
 @click.group()
 def cli():
     pass
+
 
 @click.command()
 def init_database():
@@ -18,10 +20,12 @@ def init_database():
     create_all_tables()
     print('[init_database] finished')
 
+
 @click.command()
-def fetch_all():
-    print('[fetch_all] Starting downloading of all data')
-    sync_fetch(api_client)
+@click.argument('entity')
+def fetch_all(entity):
+    print(f'[fetch_all] Starting downloading of all data for entity "{entity}""')
+    fetch(api_client, entity)
     print('[fetch_all] finished')
 
 

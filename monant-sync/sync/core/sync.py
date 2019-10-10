@@ -37,11 +37,25 @@ def map_and_save(iterable, mapper, flatten=True):
     session.commit()
 
 
-def fetch_all_data(api_client,):
-
-    # Sources
+def fetch_sources(api_client):
     map_and_save(sources_iterator(api_client), map_source)
 
-    # Articles
+
+def fetch_articles(api_client):
     map_and_save(articles_iterator(api_client=api_client,
                                    start_from=1, until=None, size=100), map_article)
+
+
+def fetch_all_data(api_client):
+    fetch_sources(api_client)
+    fetch_articles(api_client)
+
+
+def fetch(api_client, entity):
+    choices = {
+        'all': fetch_all_data,
+        'source': fetch_sources,
+        'article': fetch_articles
+    }
+
+    choices[entity](api_client)
