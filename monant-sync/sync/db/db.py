@@ -1,8 +1,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.schema import Column, ForeignKey, Table
-from sqlalchemy.orm import relationship
 from sqlalchemy.types import Text, BigInteger, DateTime
 from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
