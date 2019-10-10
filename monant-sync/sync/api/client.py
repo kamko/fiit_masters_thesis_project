@@ -9,11 +9,16 @@ class ApiClient:
         self.auth = auth
         self.base_url = base_url
 
-    def get(self, url, params=None):
+    def get(self, url, content_key=None, params=None):
         if params is None:
             params = {}
 
-        return rq.get(self.base_url + url, params=params, auth=self.auth).json()
+        res = rq.get(self.base_url + url, params=params, auth=self.auth).json()
+
+        if content_key is not None:
+            return res[content_key]
+        
+        return res
 
     def post(self, url, json=None):
         if json is None:
@@ -38,10 +43,8 @@ class ApiClient:
 
 
 def client(username, password):
-    auth = MonantAuth(
-        base_url='https://api.monant.fiit.stuba.sk/',
-        username=username,
-        password=password
-    )
+    base_url = 'https://api.monant.fiit.stuba.sk/'
 
-    return ApiClient(base_url='https://api.monant.fiit.stuba.sk/', auth=auth)
+    auth = MonantAuth(base_url, username, password)
+
+    return ApiClient(base_url, auth)

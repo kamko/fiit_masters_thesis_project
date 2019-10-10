@@ -1,6 +1,6 @@
 import os
 from api.client import client
-from db import save_article
+from db.mapper import *
 from util import foreach
 
 
@@ -14,12 +14,20 @@ def articles_iterator(api_client, start_from=1, until=None, size=100):
     )
 
 
-def sync_data(api_client):
+def sources_iterator(api_client):
+    yield api_client.get(url='v1/sources', content_key='sources')
+
+
+def fetch_all_data(api_client):
+
+    # Sources
+    foreach(sources_iterator(api_client), map_source)
+
+    # Articles
     foreach(articles_iterator(api_client=api_client,
-                              start_from=1, until=10, size=1), save_article)
+                              start_from=1, until=None, size=100), map_article)
 
 
 if __name__ == '__main__':
     api_client = client(username=os.environ['MONANT_AUTH_USERNAME'],
                         password=os.environ['MONANT_AUTH_PASSWORD'])
-    sync_data(api_client)

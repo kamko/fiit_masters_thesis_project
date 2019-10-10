@@ -1,0 +1,10 @@
+version: '3.3'
+services:
+  postgres:
+    image: "postgres:12.0"
+    ports:
+      - "54322:5432"
+    environment:
+      POSTGRES_PASSWORD: kamkodp123
+      POSTGRES_USER: kamko-dp
+      POSTGRES_DB: dp
