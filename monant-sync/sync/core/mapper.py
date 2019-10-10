@@ -2,7 +2,18 @@ from db import Article, Source, Media
 
 
 def map_article(article):
-    pass
+    return Article(
+        id = article['id'],
+        title = article['title'],
+        perex=article['perex'],
+        body=article['body'],
+        published_at=article['published_at'],
+        url=article['url'],
+        source=map_source(article['source']),
+        media=list(map(map_media, article['media'])),
+        category=article['category'],
+        other_info=article['other_info']
+    )
 
 
 def map_source(source):

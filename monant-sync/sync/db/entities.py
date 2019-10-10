@@ -26,7 +26,7 @@ class Article(Base):
     url = Column(Text)
 
     source_id = Column(BigInteger, ForeignKey('source.id'))
-    source = relationship("Source", uselist=False, cascade='save-update')
+    source = relationship("Source", uselist=False)
 
     media = relationship(
         "Media", secondary=media_article_table, cascade='save-update')
@@ -34,6 +34,19 @@ class Article(Base):
     category = Column(Text)
 
     other_info = Column(JSONB)
+
+    def __init__(self, id, title, perex, body, published_at,
+                 url, source, media, category, other_info):
+        self.id = id
+        self.title = title
+        self.perex = perex
+        self.body = body
+        self.published_at = published_at
+        self.url = url
+        self.source_id = source.id
+        self.media = media
+        self.category = category
+        self.other_info = other_info
 
 
 class Source(Base):
