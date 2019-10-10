@@ -41,6 +41,24 @@ class ApiClient:
             if until is not None and i >= until:
                 break
 
+    def get_newest(self, url, content_key, last_id, max_count, size=10):
+        i = 0
+
+        while i < max_count:
+            page = self.get(url, params={
+                'last_id': last_id,
+                'count': size
+            })
+
+            content = page[content_key]
+
+            yield content
+
+            i = i + len(content)
+
+            if len(content) < size:
+                break
+
 
 def create_client(username, password):
     base_url = 'https://api.monant.fiit.stuba.sk/'

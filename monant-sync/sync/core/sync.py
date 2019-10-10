@@ -8,9 +8,20 @@ from util import flatten_iterable, sleeping_iterable
 def articles_iterator(api_client, start_from=1, until=None, size=100):
     return api_client.get_paginated(
         url='v1/articles',
-        content_key="articles",
+        content_key='articles',
         start_from=start_from,
         until=until,
+        size=size
+    )
+
+
+@sleeping_iterable(min=0.1, max=3)
+def new_articles_iterator(api_client, last_id, max_count, size=100):
+    return api_client.get_newest(
+        url='v1/articles',
+        content_key='articles',
+        last_id=last_id,
+        max_count=max_count,
         size=size
     )
 
@@ -37,25 +48,38 @@ def map_and_save(iterable, mapper, flatten=True):
     session.commit()
 
 
-def fetch_sources(api_client):
+def fetch_all_sources(api_client):
     map_and_save(sources_iterator(api_client), map_source)
 
 
-def fetch_articles(api_client):
+def fetch_all_articles(api_client):
     map_and_save(articles_iterator(api_client=api_client,
                                    start_from=1, until=None, size=100), map_article)
 
 
-def fetch_all_data(api_client):
-    fetch_sources(api_client)
-    fetch_articles(api_client)
+def fetch_all_entities(api_client):
+    fetch_all_sources(api_client)
+    fetch_all_articles(api_client)
 
 
-def fetch(api_client, entity):
+def fetch_all(api_client, entity):
     choices = {
-        'all': fetch_all_data,
-        'source': fetch_sources,
-        'article': fetch_articles
+        'all': fetch_all_entities,
+        'source': fetch_all_sources,
+        'article': fetch_all_articles
     }
 
     choices[entity](api_client)
+
+
+def fetch_new_articles(api_client, last_id, max_count):
+    map_and_save(new_articles_iterator(api_client=api_client,
+                                       last_id=last_id, max_count=max_count), map_article)
+
+
+def fetch_new(api_client, entity, last_id, max_count):
+    choices = {
+        'article': fetch_new_articles
+    }
+
+    choices[entity](api_client, last_id, max_count)

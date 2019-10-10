@@ -9,9 +9,9 @@ Base = declarative_base()
 media_article_table = Table('article_media',
                             Base.metadata,
                             Column('article_id', BigInteger,
-                                   ForeignKey('article.url')),
+                                   ForeignKey('article.id')),
                             Column('media_id', BigInteger,
-                                   ForeignKey('media.url')))
+                                   ForeignKey('media.id')))
 
 
 class Article(Base):
@@ -68,7 +68,7 @@ class Source(Base):
 class Media(Base):
     __tablename__ = 'media'
 
-    id = Column(BigInteger)
+    id = Column(BigInteger, primary_key=True)
 
     url = Column(Text)
     caption = Column(Text)

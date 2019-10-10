@@ -2,7 +2,8 @@ import os
 import click
 from api.client import create_client
 from db import create_all_tables, setup_db_engine
-from core.sync import fetch
+from core.sync import fetch_all as sync_fetch_all
+from core.sync import fetch_new as sync_fetch_new
 
 db_engine = setup_db_engine(uri=os.environ['POSTGRESQL_URI'])
 api_client = create_client(username=os.environ['MONANT_AUTH_USERNAME'],
@@ -24,18 +25,25 @@ def init_database():
 @click.command()
 @click.argument('entity')
 def fetch_all(entity):
-    print(f'[fetch_all] Starting downloading of all data for entity "{entity}""')
-    fetch(api_client, entity)
+    print(
+        f'[fetch_all] Starting downloading of all data for entity "{entity}"')
+    sync_fetch_all(api_client, entity)
     print('[fetch_all] finished')
 
 
 @click.command()
-def fetch_new():
-    pass
+@click.argument('entity')
+@click.option('--last-id', required=True, type=int)
+@click.option('--max-count', required=True, type=int)
+def fetch_new(entity, last_id, max_count):
+    print(f'[fetch_new] Starting downloading of all data for entity "{entity}"')
+    sync_fetch_new(api_client, entity, last_id, max_count)
+    print('[fetch_new] finished')
 
 
 cli.add_command(init_database)
 cli.add_command(fetch_all)
+cli.add_command(fetch_new)
 
 if __name__ == '__main__':
     cli()
