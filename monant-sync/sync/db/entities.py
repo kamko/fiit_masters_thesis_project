@@ -8,22 +8,23 @@ Base = declarative_base()
 
 media_article_table = Table('article_media',
                             Base.metadata,
-                            Column('article_id', BigInteger,
-                                   ForeignKey('article.id')),
-                            Column('media_id', BigInteger,
-                                   ForeignKey('media.id')))
+                            Column('article_id', Text,
+                                   ForeignKey('article.url')),
+                            Column('media_id', Text,
+                                   ForeignKey('media.url')))
 
 
 class Article(Base):
     __tablename__ = 'article'
 
-    id = Column(BigInteger, primary_key=True)
+    url = Column(Text, primary_key=True)
+
+    id = Column(BigInteger)
 
     title = Column(Text)
     perex = Column(Text)
     body = Column(Text)
     published_at = Column(DateTime)
-    url = Column(Text)
 
     source_id = Column(BigInteger, ForeignKey('source.id'))
     source = relationship("Source", uselist=False)
@@ -68,11 +69,11 @@ class Source(Base):
 class Media(Base):
     __tablename__ = 'media'
 
-    id = Column(BigInteger, primary_key=True)
+    url = Column(Text, primary_key=True)
 
+    id = Column(BigInteger)
     caption = Column(Text)
     media_type = Column(Text)
-    url = Column(Text)
 
     def __init__(self, id, caption, media_type, url):
         self.id = id
