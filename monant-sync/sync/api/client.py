@@ -17,7 +17,7 @@ class ApiClient:
 
         if content_key is not None:
             return res[content_key]
-        
+
         return res
 
     def post(self, url, json=None):
@@ -42,7 +42,7 @@ class ApiClient:
                 break
 
 
-def client(username, password):
+def create_client(username, password):
     base_url = 'https://api.monant.fiit.stuba.sk/'
 
     auth = MonantAuth(base_url, username, password)

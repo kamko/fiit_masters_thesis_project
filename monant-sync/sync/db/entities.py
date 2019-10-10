@@ -1,4 +1,3 @@
-from sqlalchemy import create_engine
 from sqlalchemy.schema import Column, ForeignKey, Table
 from sqlalchemy.types import Text, BigInteger, DateTime
 from sqlalchemy.dialects.postgresql import JSONB
@@ -26,10 +25,11 @@ class Article(Base):
     published_at = Column(DateTime)
     url = Column(Text)
 
-    source_id = Column(BigInteger)
-    source = relationship("Source", uselist=False)
+    source_id = Column(BigInteger, ForeignKey('source.id'))
+    source = relationship("Source", uselist=False, cascade='save-update')
 
-    media = relationship("Media", secondary=media_article_table)
+    media = relationship(
+        "Media", secondary=media_article_table, cascade='save-update')
 
     category = Column(Text)
 
@@ -43,6 +43,13 @@ class Source(Base):
 
     name = Column(Text)
     url = Column(Text)
+    stype = Column(Text)
+
+    def __init__(self, id, name, url, stype):
+        self.id = id
+        self.name = name
+        self.url = url,
+        self.stype = stype
 
 
 class Media(Base):
@@ -54,3 +61,8 @@ class Media(Base):
     media_type = Column(Text)
     url = Column(Text)
 
+    def __init__(self, id, caption, media_type, url):
+        self.id = id
+        self.caption = caption
+        self.media_type = media_type,
+        self.url = url

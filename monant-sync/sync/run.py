@@ -1,10 +1,11 @@
 # cli
 import os
-from db import create_all_tables, create_engine
-from core.sync import fetch_all_data
+from api.client import create_client
+from db import create_all_tables, setup_db_engine
+from core.sync import fetch_all_data as sync_fetch
 
-db_engine = create_engine(uri=os.environ['POSTGRESQL_URI'])
-api_client = api_client = client(username=os.environ['MONANT_AUTH_USERNAME'],
+db_engine = setup_db_engine(uri=os.environ['POSTGRESQL_URI'])
+api_client = create_client(username=os.environ['MONANT_AUTH_USERNAME'],
                                  password=os.environ['MONANT_AUTH_PASSWORD'])
 
 
@@ -15,9 +16,11 @@ def init_database():
 
 def fetch_all_data():
     print('[fetch_all_data] Starting downloading of all data')
-    fetch_all_data(api_client)
+    sync_fetch(api_client)
     print('[fetch_all_data] finished')
 
 
 def sync_new():
     pass
+
+fetch_all_data()
