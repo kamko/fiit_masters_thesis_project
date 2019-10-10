@@ -7,10 +7,10 @@ Automatic image builds and pushed to [Docker Hub](https://hub.docker.com/r/kamko
 ## Run
 Run using docker (so you don't need to care about dependencies)
 ```
-docker run --rm kamko/monant-sync \
+docker run --rm  \
         -e MONANT_AUTH_USERNAME=<username> \
         -e MONANT_AUTH_PASSWORD=<password> \
         -e POSTGRESQL_URI=<pg-uri>\
-        [OPTIONS] COMMAND [ARGS]...
+        kamko/monant-sync [OPTIONS] COMMAND [ARGS]...
 ```
 
