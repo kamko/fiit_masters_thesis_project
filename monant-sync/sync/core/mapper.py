@@ -1,3 +1,5 @@
+from db import Article, Source, Media
+
 def map_article(article):
     pass
 

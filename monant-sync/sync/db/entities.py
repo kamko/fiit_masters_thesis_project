@@ -54,11 +54,3 @@ class Media(Base):
     media_type = Column(Text)
     url = Column(Text)
 
-
-def engine():
-    from os import environ
-    return create_engine(os.environ['POSTGRESQL_URI'])
-
-
-def create_all_tables(engine):
-    Base.metadata.create_all(engine)

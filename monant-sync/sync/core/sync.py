@@ -1,6 +1,6 @@
 import os
 from api.client import client
-from db.mapper import *
+from mapper import *
 from util import foreach
 
 
@@ -25,9 +25,4 @@ def fetch_all_data(api_client):
 
     # Articles
     foreach(articles_iterator(api_client=api_client,
-                              start_from=1, until=None, size=100), map_article)
-
-
-if __name__ == '__main__':
-    api_client = client(username=os.environ['MONANT_AUTH_USERNAME'],
-                        password=os.environ['MONANT_AUTH_PASSWORD'])
+                              start_from=1, until=10, size=100), map_article)
