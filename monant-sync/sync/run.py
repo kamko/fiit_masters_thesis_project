@@ -29,7 +29,8 @@ def fetch_all(entity):
     print('[fetch_all] finished')
 
 
-def sync_new():
+@click.command()
+def fetch_new():
     pass
 
 

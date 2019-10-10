@@ -8,19 +8,18 @@ Base = declarative_base()
 
 media_article_table = Table('article_media',
                             Base.metadata,
-                            Column('article_id', Text,
+                            Column('article_id', BigInteger,
                                    ForeignKey('article.url')),
-                            Column('media_id', Text,
+                            Column('media_id', BigInteger,
                                    ForeignKey('media.url')))
 
 
 class Article(Base):
     __tablename__ = 'article'
 
-    url = Column(Text, primary_key=True)
-
-    id = Column(BigInteger)
-
+    id = Column(BigInteger, primary_key=True)
+    
+    url = Column(Text)
     title = Column(Text)
     perex = Column(Text)
     body = Column(Text)
@@ -69,9 +68,9 @@ class Source(Base):
 class Media(Base):
     __tablename__ = 'media'
 
-    url = Column(Text, primary_key=True)
-
     id = Column(BigInteger)
+
+    url = Column(Text)
     caption = Column(Text)
     media_type = Column(Text)
 
