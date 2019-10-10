@@ -26,12 +26,12 @@ def map_and_save(iterable, mapper, flatten=True):
         iterable = flatten_iterable(iterable)
 
     for i, j in enumerate(iterable):
-        print(f'[map_and_save] iteration {i+1} of unknown')
+        print(f'[map_and_save] item {i+1} of unknown')
 
         m = mapper(j)
         session.add(m)
 
-        if i % 10:
+        if i % 2500 == 0:
             session.flush()
 
     session.commit()
