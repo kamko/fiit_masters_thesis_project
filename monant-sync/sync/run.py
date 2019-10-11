@@ -2,6 +2,7 @@ import os
 import click
 from api.client import create_client
 from db import create_all_tables, setup_db_engine
+from db import run_action as db_run_action
 from core.sync import fetch_all as sync_fetch_all
 from core.sync import fetch_new as sync_fetch_new
 
@@ -40,10 +41,16 @@ def fetch_new(entity, last_id, max_count):
     sync_fetch_new(api_client, entity, last_id, max_count)
     print('[fetch_new] finished')
 
+@click.command()
+@click.argument('action')
+def articles(action):
+    res = db_run_action(action)
+    print(f'[Articles action: {action}] = {res}')
 
 cli.add_command(init_database)
 cli.add_command(fetch_all)
 cli.add_command(fetch_new)
+cli.add_command(articles)
 
 if __name__ == '__main__':
     cli()
