@@ -37,7 +37,7 @@ def fetch_all(entity):
 @click.option('--last-id', required=True, type=int)
 @click.option('--max-count', required=True, type=int)
 def fetch_new(entity, last_id, max_count):
-    print(f'[fetch_new] Starting downloading of all data for entity "{entity}"')
+    print(f'[fetch_new] Starting downloading of new data for entity "{entity}"')
 
     if last_id == -1:
         print(f'[fetch_new] last_id set to -1 -> using last id in database')
