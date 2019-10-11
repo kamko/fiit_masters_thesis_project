@@ -42,6 +42,7 @@ def fetch_new(entity, last_id, max_count):
     if last_id == -1:
         print(f'[fetch_new] last_id set to -1 -> using last id in database')
         last_id = db_run_action('last-id')
+        last_id = last_id + 1 # workaround due to bug in API
 
     sync_fetch_new(api_client, entity, last_id, max_count)
     print('[fetch_new] finished')
