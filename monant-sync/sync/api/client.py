@@ -59,7 +59,7 @@ class ApiClient:
             if len(content) < size:
                 break
 
-            last_id = content[-1]['id']
+            last_id = content[-1]['id'] + 1
 
 
 def create_client(username, password):
