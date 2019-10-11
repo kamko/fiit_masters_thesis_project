@@ -43,9 +43,13 @@ def fetch_new(entity, last_id, max_count):
 
 @click.command()
 @click.argument('action')
-def articles(action):
+@click.option('--verbose', default=False, is_flag=True)
+def articles(action, verbose):
     res = db_run_action(action)
-    print(f'[Articles action: {action}] = {res}')
+    if verbose:
+        print(f'[Articles action: {action}] = {res}')
+    else:
+        print(res)
 
 cli.add_command(init_database)
 cli.add_command(fetch_all)
