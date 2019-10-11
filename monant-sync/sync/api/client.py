@@ -59,6 +59,8 @@ class ApiClient:
             if len(content) < size:
                 break
 
+            last_id = content[-1]['id']
+
 
 def create_client(username, password):
     base_url = 'https://api.monant.fiit.stuba.sk/'

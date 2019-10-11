@@ -53,8 +53,8 @@ def fetch_all_sources(api_client):
 
 
 def fetch_all_articles(api_client):
-    map_and_save(articles_iterator(api_client=api_client,
-                                   start_from=1, until=None, size=100), map_article)
+    map_and_save(new_articles_iterator(api_client=api_client,
+                                   last_id=0, max_count=9999999), map_article)
 
 
 def fetch_all_entities(api_client):
