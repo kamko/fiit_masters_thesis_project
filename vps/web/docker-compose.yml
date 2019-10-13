@@ -1,0 +1,36 @@
+version: '3'
+services:
+  traefik-proxy:
+    image: traefik:v2.0.2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    #      - "8080:8080" # traefik API port
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock # todo: use tcp
+      - ./traefik.toml:/traefik.toml # static startup configuration
+      - ./certs:/certs
+
+  static-files:
+    image: nginx:1.17.4
+    restart: unless-stopped
+    volumes:
+      - ./content:/usr/share/nginx/html
+    expose:
+      - 80
+    labels:
+      - "traefik.enable=true"
+
+      - "traefik.http.routers.static-server.rule=Host(`static.dp.kamko.dev`)" # http endpoint
+      - "traefik.http.routers.static-server.entryPoints=web"
+
+      - "traefik.http.routers.static-server.middlewares=https_redirect" # http to https redirect
+      - "traefik.http.middlewares.https_redirect.redirectscheme.scheme=https"
+
+      - "traefik.http.routers.static-server_tls.rule=Host(`static.dp.kamko.dev`)" # https endpoint
+      - "traefik.http.routers.static-server_tls.entryPoints=websecure"
+      - "traefik.http.routers.static-server_tls.tls"
+
+      - "traefik.http.routers.static-server_tls.tls.certResolver=default"
+
