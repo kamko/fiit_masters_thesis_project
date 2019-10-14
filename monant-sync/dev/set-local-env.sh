@@ -1,7 +1,5 @@
 #!/bin/bash
 
-set -e
-
 auth_file=$1
 
 if [[ -z "$auth_file" ]]; then echo "Missing 'auth_file' parameter" && exit 1; fi
