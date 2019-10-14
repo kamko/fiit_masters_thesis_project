@@ -44,4 +44,4 @@ def sync_engagement(fb_client, last_id, max_count):
             if i % 1000 == 0:
                 session.flush()
             
-            last_id = urls[-1][0]
+            last_id = urls[0][0]
