@@ -18,12 +18,12 @@ class FbApiClient:
         print('[fb] access token acquired')
         return res.json()['access_token']
 
-    def get_engagement(self, urls):
+    def get_objects(self, urls, fields):
         print(f'[fb] getting engagement for {len(urls)} urls')
         data = requests.get(self.url,
                             params={
                                 'ids': ','.join(urls),
-                                'fields': 'engagement',
+                                'fields': fields,
                                 'access_token': self.token
                             }).json()
         

@@ -26,12 +26,12 @@ def find_last_id_with_engagement():
     return id
 
 
-def get_engagement(fb_client, last_id, max_count):
+def get_field(fb_client, last_id, max_count):
     with session_scope() as session:
         urls = _get_urls(session, last_id, max_count)
         if len(urls) == 0:
             return
 
-        engagements = fb_client.get_engagement(urls=urls)
+        engagements = fb_client.get_objects(urls=urls, fields='engagement')
         for e in engagements:
             session.add(map_engagement(e))

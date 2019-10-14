@@ -6,7 +6,7 @@ from db import create_all_tables, setup_db_engine
 from db import run_action as db_run_action
 from core.monant_sync import fetch_all as sync_fetch_all
 from core.monant_sync import fetch_new as sync_fetch_new
-from core.fb_sync import get_engagement as fb_get_engagement, find_last_id_with_engagement
+from core.fb_sync import get_field as fb_get_engagement, find_last_id_with_engagement
 
 db_engine = setup_db_engine(uri=os.environ['POSTGRESQL_URI'])
 
