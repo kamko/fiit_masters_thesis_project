@@ -28,11 +28,11 @@ class FbApiClient:
                                'access_token': self.token
                            })
 
-        print(f'[debug] {res}')
+        print(f'[debug] {res.headers["x-app-usage"]}')
         return [k for i, k in res.json().items()], self._is_next_req_viable(res)
 
     def _is_next_req_viable(self, response):
-        usage = json.loads(res.headers["x-app-usage"])
+        usage = json.loads(response.headers["x-app-usage"])
 
         return usage['call_count'] > 97
 
