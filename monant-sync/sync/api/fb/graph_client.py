@@ -33,8 +33,8 @@ class FbApiClient:
 
     def _is_next_req_viable(self, response):
         usage = json.loads(response.headers["x-app-usage"])
-
-        return usage['call_count'] > 97
+        
+        return usage['call_count'] <= 98
 
 
 def create_client(app_id, app_secret):

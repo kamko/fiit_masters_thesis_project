@@ -49,6 +49,7 @@ def sync_engagement(fb_client, last_id, max_count):
 
             last_id = urls[-1][0]
 
+            print(next_req)
             if next_req == False:
                 print('[fb] interrupting next request due to API rate limits!')
                 return
