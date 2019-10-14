@@ -1,3 +1,6 @@
+from db import Base
+from contextlib import contextmanager
+
 _engine = None
 _session_conf = None
 
@@ -24,3 +27,17 @@ def get_session():
         _session_conf.configure(bind=_engine)
 
     return _session_conf()
+
+
+@contextmanager
+def session_scope():
+    global _session_conf
+    session = get_session()
+    try:
+        yield session
+        session.commit()
+    except:
+        session.rollback()
+        raise
+    finally:
+        session.close()

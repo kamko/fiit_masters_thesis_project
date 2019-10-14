@@ -1,5 +1,5 @@
 from sqlalchemy.schema import Column, ForeignKey, Table
-from sqlalchemy.types import Text, BigInteger, DateTime
+from sqlalchemy.types import Text, BigInteger, DateTime, Integer
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
@@ -18,8 +18,8 @@ class Article(Base):
     __tablename__ = 'article'
 
     id = Column(BigInteger, primary_key=True)
-    
-    url = Column(Text)
+
+    url = Column(Text, unique=True)
     title = Column(Text)
     perex = Column(Text)
     body = Column(Text)
@@ -29,7 +29,9 @@ class Article(Base):
     source = relationship("Source", uselist=False)
 
     media = relationship(
-        "Media", secondary=media_article_table, cascade='save-update')
+        'Media', secondary=media_article_table, cascade='save-update')
+
+    fb_engagement = relationship('FacebookEngagement', uselist=False)
 
     category = Column(Text)
 
@@ -79,3 +81,21 @@ class Media(Base):
         self.caption = caption
         self.media_type = media_type,
         self.url = url
+
+
+class FacebookEngagement(Base):
+    __tablename__ = 'article_fb_engagement'
+
+    url = Column(Text, ForeignKey('article.url'), primary_key=True)
+
+    reaction_count = Column(Integer)
+    comment_count = Column(Integer)
+    share_count = Column(Integer)
+    comment_plugin_count = Column(Integer)
+
+    def __init__(self, url, reaction_count, comment_count, share_count, comment_plugin_count):
+        self.url = url
+        self.reaction_count = reaction_count
+        self.comment_count = comment_count
+        self.share_count = share_count
+        self.comment_plugin_count = comment_plugin_count

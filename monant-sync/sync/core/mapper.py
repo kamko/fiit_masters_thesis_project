@@ -1,10 +1,10 @@
-from db import Article, Source, Media
+from db import Article, Source, Media, FacebookEngagement
 
 
 def map_article(article):
     return Article(
-        id = article['id'],
-        title = article['title'],
+        id=article['id'],
+        title=article['title'],
         perex=article['perex'],
         body=article['body'],
         published_at=article['published_at'],
@@ -31,4 +31,15 @@ def map_media(media):
         caption=media['caption'],
         media_type=media.get('media_type', {}).get('name', None),
         url=media['url']
+    )
+
+
+def map_engagement(engagement):
+    ne = engagement['engagement']
+    return FacebookEngagement(
+        url=engagement['id'],
+        reaction_count=ne['reaction_count'],
+        comment_count=ne['comment_count'],
+        share_count=ne['share_count'],
+        comment_plugin_count=ne['comment_plugin_count'],
     )

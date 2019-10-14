@@ -1,6 +1,6 @@
 import os
 from .mapper import map_source, map_article, map_media
-from db import get_session
+from db import session_scope
 from util import flatten_iterable, sleeping_iterable
 
 
@@ -31,21 +31,18 @@ def sources_iterator(api_client):
 
 
 def map_and_save(iterable, mapper, flatten=True):
-    session = get_session()
+    with session_scope() as session:
+        if flatten:
+            iterable = flatten_iterable(iterable)
 
-    if flatten:
-        iterable = flatten_iterable(iterable)
+        for i, j in enumerate(iterable):
+            print(f'[map_and_save] item {i+1} of unknown')
 
-    for i, j in enumerate(iterable):
-        print(f'[map_and_save] item {i+1} of unknown')
+            m = mapper(j)
+            session.add(m)
 
-        m = mapper(j)
-        session.add(m)
-
-        if i % 2500 == 0:
-            session.flush()
-
-    session.commit()
+            if i % 2500 == 0:
+                session.flush()
 
 
 def fetch_all_sources(api_client):
@@ -54,7 +51,7 @@ def fetch_all_sources(api_client):
 
 def fetch_all_articles(api_client):
     map_and_save(new_articles_iterator(api_client=api_client,
-                                   last_id=0, max_count=9999999), map_article)
+                                       last_id=0, max_count=9999999), map_article)
 
 
 def fetch_all_entities(api_client):
