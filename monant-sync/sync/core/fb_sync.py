@@ -4,12 +4,12 @@ from .mapper import map_engagement
 
 
 def _get_urls(session, last_id, max_count):
-    urls = session.query(Article.url) \
+    urls = session.query(Article.id, Article.url) \
         .filter(Article.id > last_id) \
         .limit(max_count) \
         .all()
 
-    return [i[0] for i in urls]
+    return urls
 
 
 def find_last_id_with_engagement():
@@ -26,12 +26,22 @@ def find_last_id_with_engagement():
     return id
 
 
-def get_field(fb_client, last_id, max_count):
+def sync_engagement(fb_client, last_id, max_count):
     with session_scope() as session:
-        urls = _get_urls(session, last_id, max_count)
-        if len(urls) == 0:
-            return
+        for i in range(0, max_count, 50):
+            urls = _get_urls(session, last_id, 50)
+        
+            if len(urls) == 0:
+                return
 
-        engagements = fb_client.get_objects(urls=urls, fields='engagement')
-        for e in engagements:
-            session.add(map_engagement(e))
+            engagements = fb_client.get_objects(urls=[u[1] for u in urls], fields='engagement')
+            for e in engagements:
+                session.add(map_engagement(e))
+
+            if len(urls) < 50:
+                return
+
+            if i % 1000 == 0:
+                session.flush()
+            
+            last_id = urls[-1][0]
