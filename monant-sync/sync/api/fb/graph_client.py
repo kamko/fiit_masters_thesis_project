@@ -28,7 +28,6 @@ class FbApiClient:
                                'access_token': self.token
                            })
 
-        print(f'[debug] {res.headers["x-app-usage"]}')
         return [k for i, k in res.json().items()], self._is_next_req_viable(res)
 
     def _is_next_req_viable(self, response):
