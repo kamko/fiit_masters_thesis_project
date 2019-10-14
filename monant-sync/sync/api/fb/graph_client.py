@@ -1,4 +1,5 @@
 import requests
+import json
 
 
 class FbApiClient:
@@ -21,14 +22,19 @@ class FbApiClient:
     def get_objects(self, urls, fields):
         print(f'[fb] getting engagement for {len(urls)} urls')
         res = requests.get(self.url,
-                            params={
-                                'ids': ','.join(urls),
-                                'fields': fields,
-                                'access_token': self.token
-                            })
-        
-        print(f'[debug] {res.headers["x-app-usage"]}')
-        return [k for i, k in res.json().items()]
+                           params={
+                               'ids': ','.join(urls),
+                               'fields': fields,
+                               'access_token': self.token
+                           })
+
+        print(f'[debug] {res}')
+        return [k for i, k in res.json().items()], self._is_next_req_viable(res)
+
+    def _is_next_req_viable(self, response):
+        usage = json.loads(res.headers["x-app-usage"])
+
+        return usage['call_count'] > 97
 
 
 def create_client(app_id, app_secret):

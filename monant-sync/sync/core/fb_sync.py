@@ -31,11 +31,13 @@ def sync_engagement(fb_client, last_id, max_count):
     with session_scope() as session:
         for i in range(0, max_count, 50):
             urls = _get_urls(session, last_id, 50)
-        
+
             if len(urls) == 0:
                 return
 
-            engagements = fb_client.get_objects(urls=[u[1] for u in urls], fields='engagement')
+            engagements, next_req = fb_client.get_objects(urls=[u[1] for u in urls],
+                                                          fields='engagement')
+
             for e in engagements:
                 session.add(map_engagement(e))
 
@@ -44,5 +46,8 @@ def sync_engagement(fb_client, last_id, max_count):
 
             if i % 1000 == 0:
                 session.flush()
-            
+
             last_id = urls[-1][0]
+
+            if next_req == False:
+                print('[fb] interrupting next request due to API rate limits!')
