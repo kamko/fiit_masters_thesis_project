@@ -1,3 +1,5 @@
+import datetime
+
 from sqlalchemy.schema import Column, ForeignKey, Table
 from sqlalchemy.types import Text, BigInteger, DateTime, Integer
 from sqlalchemy.dialects.postgresql import JSONB
@@ -92,6 +94,8 @@ class FacebookEngagement(Base):
     comment_count = Column(Integer)
     share_count = Column(Integer)
     comment_plugin_count = Column(Integer)
+
+    sync_date = Column(DateTime, default=datetime.datetime.utcnow)
 
     def __init__(self, url, reaction_count, comment_count, share_count, comment_plugin_count):
         self.url = url

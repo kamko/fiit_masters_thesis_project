@@ -6,6 +6,7 @@ from .mapper import map_engagement
 def _get_urls(session, last_id, max_count):
     urls = session.query(Article.id, Article.url) \
         .filter(Article.id > last_id) \
+        .order_by(Article.id.asc()) \
         .limit(max_count) \
         .all()
 
