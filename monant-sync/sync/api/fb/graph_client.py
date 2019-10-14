@@ -20,14 +20,15 @@ class FbApiClient:
 
     def get_objects(self, urls, fields):
         print(f'[fb] getting engagement for {len(urls)} urls')
-        data = requests.get(self.url,
+        res = requests.get(self.url,
                             params={
                                 'ids': ','.join(urls),
                                 'fields': fields,
                                 'access_token': self.token
-                            }).json()
+                            })
         
-        return [k for i, k in data.items()]
+        print(f'[debug] {res.headers["x-app-usage"]}')
+        return [k for i, k in res.json().items()]
 
 
 def create_client(app_id, app_secret):
