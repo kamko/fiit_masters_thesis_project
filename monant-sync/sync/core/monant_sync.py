@@ -47,7 +47,7 @@ def map_and_save(iterable, mapper, flatten=True):
 
 def fetch_all_sources(api_client):
     with session_scope() as session:
-        for source in map(map_source, sources_iterator(api_client)):
+        for source in map(map_source, flatten_iterable(sources_iterator(api_client))):
             session.merge(source)
 
 
