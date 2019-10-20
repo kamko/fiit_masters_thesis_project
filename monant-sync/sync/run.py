@@ -1,5 +1,7 @@
 import os
 import click
+import schedule
+import time
 from api.client import create_client as monant_create_client
 from api.fb.graph_client import create_client as fb_create_client
 from db import create_all_tables, setup_db_engine
@@ -7,6 +9,7 @@ from db import run_action as db_run_action
 from core.monant_sync import fetch_all as sync_fetch_all
 from core.monant_sync import fetch_new as sync_fetch_new
 from core.fb_sync import sync_engagement as fb_get_engagement, find_last_id_with_engagement
+from core.monitoring import run as monitor_run
 
 db_engine = setup_db_engine(uri=os.environ['POSTGRESQL_URI'])
 
@@ -85,11 +88,22 @@ def facebook(field, last_id, max_count):
     fb_get_engagement(fb_client(), last_id, max_count)
 
 
+@click.command()
+def monitor():
+    print("[monitor] scheduler started!")
+    schedule.every(2).hour.do(
+        monitor_run, monant_client=monant_client(), fb_client_provider=fb_client)
+    while True:
+        schedule.run_pending()
+        time.sleep(1)
+
+
 cli.add_command(init_database)
 cli.add_command(fetch_all)
 cli.add_command(fetch_new)
 cli.add_command(articles)
 cli.add_command(facebook)
+cli.add_command(monitor)
 
 if __name__ == '__main__':
     cli()

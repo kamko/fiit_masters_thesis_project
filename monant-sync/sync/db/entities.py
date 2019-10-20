@@ -88,7 +88,9 @@ class Media(Base):
 class FacebookEngagement(Base):
     __tablename__ = 'article_fb_engagement'
 
-    url = Column(Text, ForeignKey('article.url'), primary_key=True)
+    id = Column(BigInteger, primary_key=True)
+
+    url = Column(Text, ForeignKey('article.url'))
 
     reaction_count = Column(Integer)
     comment_count = Column(Integer)
@@ -103,3 +105,31 @@ class FacebookEngagement(Base):
         self.comment_count = comment_count
         self.share_count = share_count
         self.comment_plugin_count = comment_plugin_count
+
+
+class MonitoredArticle(Base):
+    __tablename__ = "monitored_article"
+
+    id = Column(BigInteger, primary_key=True)
+
+    article_id = Column(BigInteger, ForeignKey('article.id'))
+    article = relationship("Article")
+
+    def __init__(self, article):
+        self.article = article
+
+
+class MonitorJobRunLog(Base):
+    __tablename__ = "monitor_job_run_log"
+
+    id = Column(BigInteger, primary_key=True)
+
+    run_started = Column(DateTime)
+    run_finished = Column(DateTime)
+
+    articles_processed = Column(Integer)
+
+    def __init__(self, run_started, run_finished, articles_processed):
+        self.run_started = run_started
+        self.run_finished = run_finished
+        self.articles_processed = articles_processed

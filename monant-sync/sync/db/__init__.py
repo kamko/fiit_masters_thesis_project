@@ -3,6 +3,9 @@ from db.entities import Article
 from db.entities import Source
 from db.entities import Media
 from db.entities import FacebookEngagement
+from db.entities import MonitoredArticle
+from db.entities import MonitorJobRunLog
+
 
 from db.db_init import setup_db_engine
 from db.db_init import create_all_tables

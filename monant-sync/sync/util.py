@@ -24,3 +24,8 @@ def sleeping_iterable(min=0.1, max=2):
         return l2_wrap
 
     return l1_wrap
+
+
+def chunks(iterable, chunk_size):
+    for i in range(0, len(iterable), chunk_size):
+        yield iterable[i:i + chunk_size]
