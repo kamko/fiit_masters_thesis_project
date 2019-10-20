@@ -91,7 +91,7 @@ def facebook(field, last_id, max_count):
 @click.command()
 def monitor():
     print("[monitor] scheduler started!")
-    schedule.every(2).hour.do(
+    schedule.every(2).hours.do(
         monitor_run, monant_client=monant_client(), fb_client_provider=fb_client)
     while True:
         schedule.run_pending()
