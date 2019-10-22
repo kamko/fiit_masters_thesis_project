@@ -93,6 +93,8 @@ def monitor():
     print("[monitor] scheduler started!")
     schedule.every(2).hours.do(
         monitor_run, monant_client=monant_client(), fb_client_provider=fb_client)
+    
+    schedule.run_all()
     while True:
         schedule.run_pending()
         time.sleep(1)
