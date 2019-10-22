@@ -4,7 +4,7 @@ from . import Article
 
 def get_last_article_id():
 
-    with session_scope as session:
+    with session_scope() as session:
         article = session \
             .query(Article) \
             .order_by(Article.id.desc()) \
