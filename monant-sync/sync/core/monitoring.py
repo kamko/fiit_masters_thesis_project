@@ -10,11 +10,11 @@ from util import flatten_iterable, chunks
 from sqlalchemy import func
 
 
-def _should_fetch_new_articles(session):
-    total_monitored = session.query(MonitoredArticle) \
-        .with_entities(func.count()) \
+def _should_fetch_new_articles(session):    
+    total_monitored = session.query(func.count(MonitoredArticle.id)) \
         .scalar()
 
+    print(total_monitored)
     return total_monitored < 2000
 
 
