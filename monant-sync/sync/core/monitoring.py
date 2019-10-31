@@ -14,7 +14,6 @@ def _should_fetch_new_articles(session):
     total_monitored = session.query(func.count(MonitoredArticle.id)) \
         .scalar()
 
-    print(total_monitored)
     return total_monitored < 3500
 
 
