@@ -15,7 +15,7 @@ def _should_fetch_new_articles(session):
         .scalar()
 
     print(total_monitored)
-    return total_monitored < 2000
+    return total_monitored < 3500
 
 
 def _refresh_sources_list(session, monant_client):
