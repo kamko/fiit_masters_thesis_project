@@ -14,7 +14,7 @@ def _should_fetch_new_articles(session):
     total_monitored = session.query(func.count(MonitoredArticle.id)) \
         .scalar()
 
-    return total_monitored < 3500
+    return total_monitored < 10000
 
 
 def _refresh_sources_list(session, monant_client):
