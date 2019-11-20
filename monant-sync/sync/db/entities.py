@@ -1,7 +1,7 @@
 import datetime
 
 from sqlalchemy.schema import Column, ForeignKey, Table
-from sqlalchemy.types import Text, BigInteger, DateTime, Integer
+from sqlalchemy.types import Text, BigInteger, DateTime, Integer, Boolean
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
@@ -61,6 +61,7 @@ class Source(Base):
     name = Column(Text)
     url = Column(Text)
     stype = Column(Text)
+    is_reliable = Column(Boolean)
 
     def __init__(self, id, name, url, stype):
         self.id = id

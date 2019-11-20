@@ -7,7 +7,9 @@ from api.fb.graph_client import create_client as fb_create_client
 from db import create_all_tables, setup_db_engine
 from db import run_action as db_run_action
 from core.monant_sync import fetch_all as sync_fetch_all
+from core.monant_sync import fetch_source_reliability as sync_fetch_source_reliability
 from core.monant_sync import fetch_new as sync_fetch_new
+
 from core.fb_sync import sync_engagement as fb_get_engagement, find_last_id_with_engagement
 from core.monitoring import run as monitor_run
 
@@ -99,6 +101,16 @@ def monitor():
         schedule.run_pending()
         time.sleep(1)
 
+@click.command()
+@click.argument('type')
+def annotation(type):
+    print(f'[annotation] fetch annotations for type: {type}')
+
+    if type == 'source-reliability':
+        sync_fetch_source_reliability(monant_client())
+    else:
+        print(f'[annotation] Unknown-type {type} - ignoring')
+
 
 cli.add_command(init_database)
 cli.add_command(fetch_all)
@@ -106,6 +118,7 @@ cli.add_command(fetch_new)
 cli.add_command(articles)
 cli.add_command(facebook)
 cli.add_command(monitor)
+cli.add_command(annotation)
 
 if __name__ == '__main__':
     cli()

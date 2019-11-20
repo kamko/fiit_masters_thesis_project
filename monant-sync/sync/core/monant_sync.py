@@ -1,6 +1,6 @@
 import os
 from .mapper import map_source, map_article, map_media
-from db import session_scope
+from db import session_scope, Source
 from util import flatten_iterable, sleeping_iterable
 
 
@@ -48,6 +48,40 @@ def map_and_save(iterable, mapper, flatten=True):
 def fetch_all_sources(api_client):
     with session_scope() as session:
         for source in map(map_source, flatten_iterable(sources_iterator(api_client))):
+            session.merge(source)
+
+
+def fetch_source_reliability(api_client):
+
+    iterable = api_client.get_paginated(
+        url='v1/entity-annotations',
+        content_key='entity_annotations',
+        size=100,
+        extra_params={
+            'annotation_category': 'label',
+            'annotation_type': 'Source reliability (binary)',
+            'method': 'Expert-based source reliability evaluation'
+        }
+    )
+
+    iterable = flatten_iterable(iterable)
+
+    maping = {
+        'reliable' : True,
+        'unreliable' : False
+    }
+
+    with session_scope() as session:
+        for i in iterable:
+            source_id = i['entity_id']
+            value = i['value']['value']
+
+            source = session.query(Source) \
+                .filter(Source.id == source_id) \
+                .one()
+
+            source.is_reliable = maping[value]
+
             session.merge(source)
 
 

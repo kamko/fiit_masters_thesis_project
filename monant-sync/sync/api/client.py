@@ -26,11 +26,14 @@ class ApiClient:
 
         return rq.post(self.base_url + url, json=json, auth=self.auth).json()
 
-    def get_paginated(self, url, content_key, start_from=1, until=None, size=10):
+    def get_paginated(self, url, content_key, start_from=1, until=None, size=10, extra_params=None):
+        if extra_params is None:
+            extra_params = {}
         for i in itertools.count(start_from):
             page = self.get(url, params={
                 'page': i,
-                'size': size
+                'size': size,
+                **extra_params
             })
 
             yield page[content_key]
