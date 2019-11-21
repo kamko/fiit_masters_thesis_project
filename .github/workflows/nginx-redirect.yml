@@ -17,9 +17,8 @@ jobs:
       - name: Build image and publish
         uses: elgohr/Publish-Docker-Github-Action@master
         with:
-          name: kamko/fiit_masters_thesis_project/nginx-redirect
-          username: kamko
-          password: ${{ secrets.GITHUB_TOKEN }}
-          registry: docker.pkg.github.com
+          name: kamko/nginx-redirect
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
           workdir: vps/docker/nginx-redirect
           snapshot: true
