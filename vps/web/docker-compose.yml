@@ -12,6 +12,28 @@ services:
       - ./traefik.toml:/traefik.toml # static startup configuration
       - ./certs:/certs
 
+  homepage:
+    image: kamko/nginx-redirect
+    restart: unless-stopped
+    environment:
+      - TARGET_HOST=https://kamko.pw
+    expose:
+      - 80
+    labels:
+      - "traefik.enable=true"
+
+      - "traefik.http.routers.homepage.rule=Host(`dp.kamko.dev`)" # http endpoint
+      - "traefik.http.routers.homepage.entryPoints=web"
+
+      - "traefik.http.routers.homepage.middlewares=https_redirect" # http to https redirect
+      - "traefik.http.middlewares.https_redirect.redirectscheme.scheme=https"
+
+      - "traefik.http.routers.homepage_tls.rule=Host(`dp.kamko.dev`)" # https endpoint
+      - "traefik.http.routers.homepage_tls.entryPoints=websecure"
+      - "traefik.http.routers.homepage_tls.tls"
+
+      - "traefik.http.routers.static-server_tls.tls.certResolver=default"
+
   static-files:
     image: nginx:1.17.6
     restart: unless-stopped
