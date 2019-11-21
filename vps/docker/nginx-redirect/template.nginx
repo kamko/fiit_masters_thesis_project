@@ -1,8 +1,8 @@
 server {
+    server_name _;
+
     listen 80;
     listen [::]:80;
-
-    server_name _;
 
     return 301 ${TARGET_HOST}$request_uri;
 }
