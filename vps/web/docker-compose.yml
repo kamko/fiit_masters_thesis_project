@@ -1,7 +1,7 @@
 version: '3'
 services:
   traefik-proxy:
-    image: traefik:v2.0.2
+    image: traefik:v2.0.5
     restart: unless-stopped
     ports:
       - "80:80"
@@ -13,7 +13,7 @@ services:
       - ./certs:/certs
 
   static-files:
-    image: nginx:1.17.4
+    image: nginx:1.17.6
     restart: unless-stopped
     volumes:
       - ./content:/usr/share/nginx/html
