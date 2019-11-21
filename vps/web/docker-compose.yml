@@ -32,7 +32,7 @@ services:
       - "traefik.http.routers.homepage_tls.entryPoints=websecure"
       - "traefik.http.routers.homepage_tls.tls"
 
-      - "traefik.http.routers.static-server_tls.tls.certResolver=default"
+      - "traefik.http.routers.homepage_tls.tls.certResolver=default"
 
   static-files:
     image: nginx:1.17.6
