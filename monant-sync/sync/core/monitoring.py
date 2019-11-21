@@ -70,12 +70,13 @@ def _fetch_engagement_for_monitored_articles(session, fb_client):
     return total
 
 
-def run(monant_client, fb_client_provider):
+def run(monant_client_provider, fb_client_provider):
     with session_scope() as session:
         start_time = datetime.now()
         print(f'[monitor] started at {start_time}')
 
         try:
+            monant_client = monant_client_provider()
             if _should_fetch_new_articles(session):
                 _refresh_sources_list(session, monant_client)
                 articles = _fetch_new_articles(session, monant_client)
