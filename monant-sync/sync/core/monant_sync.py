@@ -1,6 +1,6 @@
 import os
 from .mapper import map_source, map_article, map_media
-from db import session_scope, Source
+from db import session_scope, Source, merge_if_not_none
 from util import flatten_iterable, sleeping_iterable
 
 
@@ -30,7 +30,7 @@ def sources_iterator(api_client):
     yield api_client.get(url='v1/sources', content_key='sources')
 
 
-def map_and_save(iterable, mapper, flatten=True, merge=False):
+def map_and_save(iterable, mapper, flatten=True, merge=True, hook_before_save=None):
     with session_scope() as session:
         if flatten:
             iterable = flatten_iterable(iterable)
@@ -39,10 +39,14 @@ def map_and_save(iterable, mapper, flatten=True, merge=False):
             print(f'[map_and_save] item {i+1} of unknown')
 
             m = mapper(j)
-            if not merge:
-                session.add(m)
-            else:
+
+            if hook_before_save is not None:
+                m = hook_before_save(session, m)
+
+            if merge:
                 session.merge(m)
+            else:
+                session.add(m)
 
             if i % 2500 == 0:
                 session.flush()
@@ -70,8 +74,8 @@ def fetch_source_reliability(api_client):
     iterable = flatten_iterable(iterable)
 
     maping = {
-        'reliable' : True,
-        'unreliable' : False
+        'reliable': True,
+        'unreliable': False
     }
 
     with session_scope() as session:
@@ -89,8 +93,15 @@ def fetch_source_reliability(api_client):
 
 
 def fetch_all_articles(api_client):
+    def hook(session, article):
+        article.source = merge_if_not_none(session, article.source)
+        article.author = merge_if_not_none(session, article.author)
+
+        return article
+
     map_and_save(new_articles_iterator(api_client=api_client,
-                                       last_id=0, max_count=9999999), map_article, merge=True)
+                                       last_id=0, max_count=999999999), map_article,
+                 hook_before_save=hook)
 
 
 def fetch_all_entities(api_client):

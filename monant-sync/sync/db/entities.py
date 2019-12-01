@@ -32,10 +32,10 @@ class Article(Base):
     source = relationship("Source", uselist=False)
 
     author_id = Column(BigInteger, ForeignKey('author.id'))
-    author = relationship("Author", uselist=False, cascade='save-update')
+    author = relationship("Author", uselist=False, cascade='save-update, merge')
 
     media = relationship(
-        'Media', secondary=media_article_table, cascade='save-update')
+        'Media', secondary=media_article_table, cascade='save-update, merge')
 
     fb_engagement = relationship('FacebookEngagement', uselist=False)
 
