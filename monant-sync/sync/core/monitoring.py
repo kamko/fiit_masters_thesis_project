@@ -65,7 +65,7 @@ def _fetch_engagement_for_monitored_articles(session, fb_client):
 
         if next_req == False:
             print('[fb] interrupting next request due to API rate limits!')
-            return
+            return total
 
     return total
 
