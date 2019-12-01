@@ -31,6 +31,7 @@ def _fetch_new_articles(session, monant_client):
     res = []
     for api_article in it:
         article = map_article(api_article)
+        session.merge(article.author)
         session.merge(article)
         res.append(article)
 
