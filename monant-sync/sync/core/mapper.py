@@ -26,7 +26,7 @@ def map_author(author, source):
     return Author(
         id=author['id'],
         name=author['name'],
-        source=source
+        source_id=source.id
     )
 
 def map_source(source):
