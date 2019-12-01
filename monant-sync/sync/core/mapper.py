@@ -5,7 +5,7 @@ def map_article(article):
     source = map_source(article['source'])
     return Article(
         id=article['id'],
-        author=map_author(article['author'], source),
+        author=map_author(article['author'], source) if author is not None else None,
         title=article['title'],
         perex=article['perex'],
         body=article['body'],
