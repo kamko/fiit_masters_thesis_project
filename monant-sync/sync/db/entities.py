@@ -35,7 +35,7 @@ class Article(Base):
     author = relationship("Author", uselist=False, cascade='save-update')
 
     media = relationship(
-        'Media', secondary=media_article_table, cascade='save-update)
+        'Media', secondary=media_article_table, cascade='save-update')
 
     fb_engagement = relationship('FacebookEngagement', uselist=False)
 
