@@ -3,7 +3,7 @@ from datetime import datetime
 from .monant_sync import new_articles_iterator, sources_iterator
 from .mapper import map_article, map_engagement, map_source
 from db import run_action
-from db import session_scope
+from db import session_scope, merge_if_not_none
 from db import MonitoredArticle, MonitorJobRunLog
 from util import flatten_iterable, chunks
 
@@ -31,7 +31,9 @@ def _fetch_new_articles(session, monant_client):
     res = []
     for api_article in it:
         article = map_article(api_article)
-        session.merge(article.author)
+        
+        article.source = merge_if_not_none(session, article.source)
+        article.author = merge_if_not_none(session, article.author)
         session.add(article)
         res.append(article)
 
@@ -79,7 +81,7 @@ def run(monant_client_provider, fb_client_provider):
         try:
             monant_client = monant_client_provider()
             if _should_fetch_new_articles(session):
-                _refresh_sources_list(session, monant_client)
+                # _refresh_sources_list(session, monant_client)
                 articles = _fetch_new_articles(session, monant_client)
                 _mark_articles_as_monitored(session, articles)
         except ConnectionError as err:

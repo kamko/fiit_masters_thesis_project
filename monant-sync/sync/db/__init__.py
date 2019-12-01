@@ -14,3 +14,5 @@ from db.db_init import get_session
 from db.db_init import session_scope
 
 from db.view import run_action
+
+from db.db_util import merge_if_not_none
