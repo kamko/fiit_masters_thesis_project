@@ -30,7 +30,7 @@ def sources_iterator(api_client):
     yield api_client.get(url='v1/sources', content_key='sources')
 
 
-def map_and_save(iterable, mapper, flatten=True):
+def map_and_save(iterable, mapper, flatten=True, merge=False):
     with session_scope() as session:
         if flatten:
             iterable = flatten_iterable(iterable)
@@ -39,7 +39,10 @@ def map_and_save(iterable, mapper, flatten=True):
             print(f'[map_and_save] item {i+1} of unknown')
 
             m = mapper(j)
-            session.add(m)
+            if not merge:
+                session.add(m)
+            else:
+                session.merge(m)
 
             if i % 2500 == 0:
                 session.flush()
@@ -87,7 +90,7 @@ def fetch_source_reliability(api_client):
 
 def fetch_all_articles(api_client):
     map_and_save(new_articles_iterator(api_client=api_client,
-                                       last_id=0, max_count=9999999), map_article)
+                                       last_id=0, max_count=9999999), map_article, merge=True)
 
 
 def fetch_all_entities(api_client):

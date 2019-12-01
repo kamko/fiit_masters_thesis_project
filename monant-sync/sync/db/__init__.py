@@ -1,5 +1,6 @@
 from db.entities import Base
 from db.entities import Article
+from db.entities import Author
 from db.entities import Source
 from db.entities import Media
 from db.entities import FacebookEngagement

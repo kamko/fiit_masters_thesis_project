@@ -26,9 +26,13 @@ class Article(Base):
     perex = Column(Text)
     body = Column(Text)
     published_at = Column(DateTime)
+    extracted_at = Column(DateTime)
 
     source_id = Column(BigInteger, ForeignKey('source.id'))
     source = relationship("Source", uselist=False)
+
+    author_id = Column(BigInteger, ForeignKey('author.id'))
+    author = relationship("Author", uselist=False, cascade='save-update')
 
     media = relationship(
         'Media', secondary=media_article_table, cascade='save-update')
@@ -39,18 +43,33 @@ class Article(Base):
 
     other_info = Column(JSONB)
 
-    def __init__(self, id, title, perex, body, published_at,
+    def __init__(self, id, author, title, perex, body, published_at, extracted_at,
                  url, source, media, category, other_info):
         self.id = id
+        self.author = author
         self.title = title
         self.perex = perex
         self.body = body
         self.published_at = published_at
+        self.extracted_at = extracted_at
         self.url = url
         self.source_id = source.id
         self.media = media
         self.category = category
         self.other_info = other_info
+
+
+class Author(Base):
+    __tablename__ = 'author'
+
+    id = Column(BigInteger, primary_key=True)
+
+    name = Column(Text)
+
+    source_id = Column(BigInteger, ForeignKey('source.id'))
+    source = relationship("Source", uselist=False)
+
+    def __init__(self, id, name, source)
 
 
 class Source(Base):

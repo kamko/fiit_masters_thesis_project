@@ -1,13 +1,15 @@
-from db import Article, Source, Media, FacebookEngagement
+from db import Article, Author, Source, Media, FacebookEngagement
 
 
 def map_article(article):
     return Article(
         id=article['id'],
+        author=map_author(article['author'])
         title=article['title'],
         perex=article['perex'],
         body=article['body'],
         published_at=article['published_at'],
+        extracted_at=article['extracted_at'],
         url=article['url'],
         source=map_source(article['source']),
         media=list(map(map_media, article['media'])),
@@ -15,6 +17,13 @@ def map_article(article):
         other_info=article['other_info']
     )
 
+
+def map_author(author):
+    return Author(
+        id=author['id'],
+        name=author['name'],
+        source_id=author['source_id']
+    )
 
 def map_source(source):
     return Source(
