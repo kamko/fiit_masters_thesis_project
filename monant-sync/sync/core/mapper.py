@@ -2,27 +2,28 @@ from db import Article, Author, Source, Media, FacebookEngagement
 
 
 def map_article(article):
+    source = map_source(article['source'])
     return Article(
         id=article['id'],
-        author=map_author(article['author'])
+        author=map_author(article['author'], source),
         title=article['title'],
         perex=article['perex'],
         body=article['body'],
         published_at=article['published_at'],
         extracted_at=article['extracted_at'],
         url=article['url'],
-        source=map_source(article['source']),
+        source=source,
         media=list(map(map_media, article['media'])),
         category=article['category'],
         other_info=article['other_info']
     )
 
 
-def map_author(author):
+def map_author(author, source):
     return Author(
         id=author['id'],
         name=author['name'],
-        source_id=author['source_id']
+        source=source
     )
 
 def map_source(source):

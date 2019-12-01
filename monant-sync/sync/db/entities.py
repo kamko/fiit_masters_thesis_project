@@ -69,7 +69,10 @@ class Author(Base):
     source_id = Column(BigInteger, ForeignKey('source.id'))
     source = relationship("Source", uselist=False)
 
-    def __init__(self, id, name, source)
+    def __init__(self, id, name, source):
+        self.id = id
+        self.name = name
+        self.source = source
 
 
 class Source(Base):
