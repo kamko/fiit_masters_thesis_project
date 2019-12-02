@@ -25,7 +25,7 @@ def _refresh_sources_list(session, monant_client):
 
 def _fetch_new_articles(session, monant_client):
     print(f'[_fetch_new_articles - {datetime.now()}]')
-    last_id = run_action('last-id') + 1  # todo: bug
+    last_id = run_action('last-id')
     it = flatten_iterable(new_articles_iterator(monant_client, last_id, 500))
 
     res = []
