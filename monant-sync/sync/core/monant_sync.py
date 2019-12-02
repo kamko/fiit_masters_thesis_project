@@ -32,24 +32,25 @@ def sources_iterator(api_client):
 
 def map_and_save(iterable, mapper, flatten=True, merge=True, hook_before_save=None):
     with session_scope() as session:
-        if flatten:
-            iterable = flatten_iterable(iterable)
+        with session.no_autoflush:
+            if flatten:
+                iterable = flatten_iterable(iterable)
 
-        for i, j in enumerate(iterable):
-            print(f'[map_and_save] item {i+1} of unknown')
+            for i, j in enumerate(iterable):
+                print(f'[map_and_save] item {i+1} of unknown')
 
-            m = mapper(j)
+                m = mapper(j)
 
-            if hook_before_save is not None:
-                m = hook_before_save(session, m)
+                if hook_before_save is not None:
+                    m = hook_before_save(session, m)
 
-            if merge:
-                session.merge(m)
-            else:
-                session.add(m)
+                if merge:
+                    session.merge(m)
+                else:
+                    session.add(m)
 
-            if i % 2500 == 0:
-                session.flush()
+                if i % 2500 == 0:
+                    session.flush()
 
 
 def fetch_all_sources(api_client):
