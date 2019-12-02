@@ -1,5 +1,6 @@
 from db import Base
 from contextlib import contextmanager
+import sys
 
 _engine = None
 _session_conf = None
@@ -31,13 +32,16 @@ def get_session():
 
 @contextmanager
 def session_scope():
-    global _session_conf
     session = get_session()
     try:
         yield session
         session.commit()
+        print('commited', file=sys.stderr)
     except:
         session.rollback()
         raise
     finally:
         session.close()
+
+def get_engine():
+    return _engine

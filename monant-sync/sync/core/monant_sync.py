@@ -1,10 +1,10 @@
 import os
-from .mapper import map_source, map_article, map_media
-from db import session_scope, Source, merge_if_not_none
+from .mapper import map_source, map_article, map_media, map_author
+from db import session_scope, Source, merge_if_not_none, get_engine
 from util import flatten_iterable, sleeping_iterable
 
 
-@sleeping_iterable(min=0.1, max=3)
+@sleeping_iterable(min=0.1, max=2)
 def articles_iterator(api_client, start_from=1, until=None, size=100):
     return api_client.get_paginated(
         url='v1/articles',
@@ -15,7 +15,7 @@ def articles_iterator(api_client, start_from=1, until=None, size=100):
     )
 
 
-@sleeping_iterable(min=0.1, max=3)
+@sleeping_iterable(min=0.1, max=2)
 def new_articles_iterator(api_client, last_id, max_count, size=100):
     return api_client.get_newest(
         url='v1/articles',
@@ -30,27 +30,20 @@ def sources_iterator(api_client):
     yield api_client.get(url='v1/sources', content_key='sources')
 
 
-def map_and_save(iterable, mapper, flatten=True, merge=True, hook_before_save=None):
+def map_and_save(iterable, mapper, merge=True):
+    for i, batch in enumerate(iterable):
+        print(f'[map_and_save] batch (size={len(batch)}) {i+1} of unknown')
+        _save_all((mapper(item) for item in batch), merge)
+
+
+def _save_all(batch, merge):
     with session_scope() as session:
         with session.no_autoflush:
-            if flatten:
-                iterable = flatten_iterable(iterable)
-
-            for i, j in enumerate(iterable):
-                print(f'[map_and_save] item {i+1} of unknown')
-
-                m = mapper(j)
-
-                if hook_before_save is not None:
-                    m = hook_before_save(session, m)
-
+            for item in batch:
                 if merge:
-                    session.merge(m)
+                    session.merge(item)
                 else:
-                    session.add(m)
-
-                # if i % 2500 == 0:
-                #     session.flush()
+                    session.add(item)
 
 
 def fetch_all_sources(api_client):
@@ -94,15 +87,22 @@ def fetch_source_reliability(api_client):
 
 
 def fetch_all_articles(api_client):
-    def hook(session, article):
-        article.source = merge_if_not_none(session, article.source)
-        article.author = merge_if_not_none(session, article.author)
+    from sqlalchemy.dialects.postgresql import insert
+    from db import Author, Source
 
-        return article
+    iter = new_articles_iterator(api_client=api_client,
+                                 last_id=0, max_count=999999999)
 
-    map_and_save(new_articles_iterator(api_client=api_client,
-                                       last_id=0, max_count=999999999), map_article,
-                 hook_before_save=hook)
+    for i, batch in enumerate(iter):
+        print(f'batch_no={i}')
+        batch = [map_article(a) for a in batch]
+        with get_engine().begin() as engine:
+            engine.execute(insert(Source).on_conflict_do_nothing(),
+                           [art.source.__dict__ for art in batch if art.source is not None])
+            engine.execute(insert(Author).on_conflict_do_nothing(),
+                           [art.author.__dict__ for art in batch if art.author is not None])
+        
+        _save_all(batch, merge=True)
 
 
 def fetch_all_entities(api_client):
