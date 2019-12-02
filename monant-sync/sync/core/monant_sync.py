@@ -49,8 +49,8 @@ def map_and_save(iterable, mapper, flatten=True, merge=True, hook_before_save=No
                 else:
                     session.add(m)
 
-                if i % 2500 == 0:
-                    session.flush()
+                # if i % 2500 == 0:
+                #     session.flush()
 
 
 def fetch_all_sources(api_client):
