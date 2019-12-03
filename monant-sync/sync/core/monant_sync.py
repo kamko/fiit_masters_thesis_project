@@ -97,9 +97,9 @@ def fetch_all_articles(api_client):
         print(f'batch_no={i}')
         batch = [map_article(a) for a in batch]
         with get_engine().begin() as engine:
-            engine.execute(insert(Source).on_conflict_do_nothing(),
+            engine.execute(insert(Source).on_conflict_do_update(),
                            [art.source.__dict__ for art in batch if art.source is not None])
-            engine.execute(insert(Author).on_conflict_do_nothing(),
+            engine.execute(insert(Author).on_conflict_do_update(),
                            [art.author.__dict__ for art in batch if art.author is not None])
         
         _save_all(batch, merge=True)
