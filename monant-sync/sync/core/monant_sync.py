@@ -87,22 +87,7 @@ def fetch_source_reliability(api_client):
 
 
 def fetch_all_articles(api_client):
-    from sqlalchemy.dialects.postgresql import insert
-    from db import Author, Source
-
-    iter = new_articles_iterator(api_client=api_client,
-                                 last_id=0, max_count=999999999)
-
-    for i, batch in enumerate(iter):
-        print(f'batch_no={i}')
-        batch = [map_article(a) for a in batch]
-        with get_engine().begin() as engine:
-            engine.execute(insert(Source).on_conflict_do_update(),
-                           [art.source.__dict__ for art in batch if art.source is not None])
-            engine.execute(insert(Author).on_conflict_do_update(),
-                           [art.author.__dict__ for art in batch if art.author is not None])
-        
-        _save_all(batch, merge=True)
+    fetch_new_articles(api_client=api_client, last_id=0, max_count=999999999)
 
 
 def fetch_all_entities(api_client):
@@ -121,8 +106,22 @@ def fetch_all(api_client, entity):
 
 
 def fetch_new_articles(api_client, last_id, max_count):
-    map_and_save(new_articles_iterator(api_client=api_client,
-                                       last_id=last_id, max_count=max_count), map_article)
+    from sqlalchemy.dialects.postgresql import insert
+    from db import Author, Source
+
+    iter = new_articles_iterator(api_client=api_client,
+                                 last_id=last_id, max_count=max_count)
+
+    for i, batch in enumerate(iter):
+        print(f'batch_no={i}')
+        batch = [map_article(a) for a in batch]
+        with get_engine().begin() as engine:
+            engine.execute(insert(Source).on_conflict_do_update(),
+                           [art.source.__dict__ for art in batch if art.source is not None])
+            engine.execute(insert(Author).on_conflict_do_update(),
+                           [art.author.__dict__ for art in batch if art.author is not None])
+
+        _save_all(batch, merge=True)
 
 
 def fetch_new(api_client, entity, last_id, max_count):

@@ -3,7 +3,7 @@ from datetime import datetime
 from .monant_sync import new_articles_iterator, sources_iterator
 from .mapper import map_article, map_engagement, map_source
 from db import run_action
-from db import session_scope, merge_if_not_none
+from db import session_scope, merge_if_not_none, get_engine
 from db import MonitoredArticle, MonitorJobRunLog
 from util import flatten_iterable, chunks
 

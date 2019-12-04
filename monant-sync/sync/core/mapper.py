@@ -12,7 +12,7 @@ def map_article(article):
         published_at=article['published_at'],
         extracted_at=article['extracted_at'],
         url=article['url'],
-        source=source,
+        source_id=source.id,
         media=list(map(map_media, article['media'])),
         category=article['category'],
         other_info=article['other_info']
