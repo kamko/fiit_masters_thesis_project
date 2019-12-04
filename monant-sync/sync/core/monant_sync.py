@@ -87,6 +87,7 @@ def fetch_source_reliability(api_client):
 
 
 def fetch_all_articles(api_client):
+
     fetch_new_articles(api_client=api_client, last_id=0, max_count=999999999)
 
 
@@ -116,10 +117,22 @@ def fetch_new_articles(api_client, last_id, max_count):
         print(f'batch_no={i}')
         batch = [map_article(a) for a in batch]
         with get_engine().begin() as engine:
-            engine.execute(insert(Source).on_conflict_do_update(index_elements=['id']),
-                           [art.source.__dict__ for art in batch if art.source is not None])
-            engine.execute(insert(Author).on_conflict_do_update(index_elements=['id']),
-                           [art.author.__dict__ for art in batch if art.author is not None])
+
+            s_insert = insert(Source)
+            s_insert = s_insert.on_conflict_do_update(index_elements=['id'], set_={
+                'name': s_insert.excluded.name,
+                'url': s_insert.excluded.url,
+                'stype': s_insert.excluded.stype,
+                'is_reliable': s_insert.excluded.is_reliable})
+            engine.execute(
+                s_insert, [art.source.__dict__ for art in batch if art.source is not None])
+
+            a_insert = insert(Author)
+            a_insert = a_insert.on_conflict_do_update(index_elements=['id'], set_={
+                'name': a_insert.excluded.name,
+                'source_id': a_insert.excluded.source_id})
+            engine.execute(
+                a_insert, [art.author.__dict__ for art in batch if art.author is not None])
 
         _save_all(batch, merge=True)
 
