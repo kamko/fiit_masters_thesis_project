@@ -9,7 +9,7 @@ from util import flatten_iterable, chunks
 
 from sqlalchemy import func
 
-date_threshold = datetime.datetime(2019, 10, 21) 
+date_threshold = datetime(2019, 10, 21) 
 
 def _should_fetch_new_articles(session):    
     total_monitored = session.query(func.count(MonitoredArticle.id)) \
