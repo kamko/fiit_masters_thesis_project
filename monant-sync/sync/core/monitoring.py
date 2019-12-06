@@ -9,6 +9,7 @@ from util import flatten_iterable, chunks
 
 from sqlalchemy import func
 
+date_threshold = datetime.datetime(2019, 10, 21) 
 
 def _should_fetch_new_articles(session):    
     total_monitored = session.query(func.count(MonitoredArticle.id)) \
@@ -35,7 +36,9 @@ def _fetch_new_articles(session, monant_client):
         article.source = merge_if_not_none(session, article.source)
         article.author = merge_if_not_none(session, article.author)
         session.add(article)
-        res.append(article)
+
+        if article.published_at > date_threshold:
+            res.append(article)
 
     return res
 
