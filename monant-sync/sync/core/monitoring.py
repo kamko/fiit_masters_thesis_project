@@ -37,7 +37,7 @@ def _fetch_new_articles(session, monant_client):
         article.author = merge_if_not_none(session, article.author)
         session.add(article)
 
-        if article.published_at > date_threshold:
+        if datetime.strptime(article.published_at, '%Y-%m-%dT%H:%M:%S.%f%z') > date_threshold:
             res.append(article)
 
     return res
