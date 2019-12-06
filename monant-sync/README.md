@@ -16,4 +16,4 @@ docker run --rm  \
 
 
 ## todo:
-- [6.12.2019] fix missing fk in `article_fb_engagement' and unique idx in `article`
+- [6.12.2019] fix missing fk in `article_fb_engagement` and unique idx in `article`
