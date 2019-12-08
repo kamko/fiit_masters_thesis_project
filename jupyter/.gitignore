@@ -18,3 +18,4 @@ ipython_config.py
 # End of https://www.gitignore.io/api/jupyternotebooks
 
 db-conf.json
+final_data.csv
