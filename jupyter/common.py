@@ -1,4 +1,7 @@
+import pickle
+
 from contextlib import contextmanager
+    
 def create_engine(conf_file, key):
     import json
     from sqlalchemy import create_engine
@@ -20,3 +23,11 @@ def figsize(plt, x, y):
         yield
     finally:
         plt.rcParams['figure.figsize'] = (6.4, 4.8)
+
+def load_df(file_name):
+    with open(file_name, 'rb') as f:
+        return pickle.load(f)
+
+def save_df(df, file_name):
+    with open(file_name, 'wb') as f:
+        pickle.dump(df, f)
