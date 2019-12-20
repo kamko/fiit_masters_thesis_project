@@ -9,7 +9,8 @@ from util import flatten_iterable, chunks
 
 from sqlalchemy import func
 
-date_threshold = dt.datetime(2019, 10, 21, 0, 0, 0, 0, tzinfo=dt.timezone(dt.timedelta(seconds=3600)))
+date_threshold = dt.datetime(
+    2019, 10, 21, 0, 0, 0, 0, tzinfo=dt.timezone(dt.timedelta(seconds=3600)))
 
 
 def _should_fetch_new_articles(session):
@@ -38,7 +39,7 @@ def _fetch_new_articles(session, monant_client):
         article.author = merge_if_not_none(session, article.author)
         session.add(article)
 
-        if dt.datetime.strptime(article.published_at, '%Y-%m-%dT%H:%M:%S.%f%z') > date_threshold:
+        if article.published_at is not None and dt.datetime.strptime(article.published_at, '%Y-%m-%dT%H:%M:%S.%f%z') > date_threshold:
             res.append(article)
 
     return res
