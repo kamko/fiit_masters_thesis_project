@@ -32,7 +32,8 @@ def _fetch_new_articles(session, monant_client):
     it = flatten_iterable(new_articles_iterator(monant_client, last_id, 500))
 
     res = []
-    for api_article in it:
+    for i, api_article in enumerate(it):
+        print(i)
         article = map_article(api_article)
 
         article.source = merge_if_not_none(session, article.source)
