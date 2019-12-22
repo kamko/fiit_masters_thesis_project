@@ -91,8 +91,8 @@ def run(monant_client_provider, fb_client_provider):
                 _mark_articles_as_monitored(session, articles)
         except ConnectionError as err:
             print(f'[monitor] - monant fetch failed! reason={err}')
-        total = _fetch_engagement_for_monitored_articles(
-            session, fb_client=fb_client_provider())
+        # total = _fetch_engagement_for_monitored_articles(
+            # session, fb_client=fb_client_provider())
 
         end_time = dt.datetime.now()
         print(f'[monitor] finished at {end_time}')
