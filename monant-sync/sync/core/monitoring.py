@@ -85,14 +85,13 @@ def run(monant_client_provider, fb_client_provider):
 
         try:
             monant_client = monant_client_provider()
-            if _should_fetch_new_articles(session):
-                # _refresh_sources_list(session, monant_client)
-                articles = _fetch_new_articles(session, monant_client)
-                _mark_articles_as_monitored(session, articles)
+            _refresh_sources_list(session, monant_client)
+            articles = _fetch_new_articles(session, monant_client)
+            _mark_articles_as_monitored(session, articles)
         except ConnectionError as err:
             print(f'[monitor] - monant fetch failed! reason={err}')
-        # total = _fetch_engagement_for_monitored_articles(
-            # session, fb_client=fb_client_provider())
+        total = _fetch_engagement_for_monitored_articles(
+            session, fb_client=fb_client_provider())
 
         end_time = dt.datetime.now()
         print(f'[monitor] finished at {end_time}')
