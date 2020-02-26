@@ -29,3 +29,10 @@ def prefix_sums(arr):
         res[i] = res[i - 1] + res[i]
 
     return res
+
+def split_X_y(df, selected_label, all_labels):
+    
+    X = df.copy().drop(columns=all_labels)
+    y = df.copy()[selected_label]
+    
+    return X, y
