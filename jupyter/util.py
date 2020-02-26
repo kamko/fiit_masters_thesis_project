@@ -36,3 +36,6 @@ def split_X_y(df, selected_label, all_labels):
     y = df.copy()[selected_label]
     
     return X, y
+
+def empty_features(df):
+    return pd.DataFrame(index=df.index)
