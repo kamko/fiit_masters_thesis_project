@@ -125,6 +125,6 @@ dmypy.json
 
 
 db-conf.json
-final_data.pickle
+/data
 
 

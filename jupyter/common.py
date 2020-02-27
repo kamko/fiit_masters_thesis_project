@@ -1,4 +1,4 @@
-import pickle
+import dill
 
 from contextlib import contextmanager
     
@@ -25,9 +25,19 @@ def figsize(plt, x, y):
         plt.rcParams['figure.figsize'] = (6.4, 4.8)
 
 def load_df(file_name):
-    with open(file_name, 'rb') as f:
-        return pickle.load(f)
+    with open(f'data/{file_name}', 'rb') as f:
+        return dill.load(f)
 
 def save_df(df, file_name):
-    with open(file_name, 'wb') as f:
-        pickle.dump(df, f)
+    with open(f'data/{file_name}', 'wb') as f:
+        dill.dump(df, f)
+
+def save_session(name):
+    dill.dump_session(f'data/{name}')
+    
+def load_session(name):
+    try:
+        dill.load_session(f'data/{name}')
+    except FileNotFoundError:
+        print(f'{name} is missing')
+
