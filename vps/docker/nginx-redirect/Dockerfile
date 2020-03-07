@@ -1,4 +1,4 @@
-FROM nginx:1.17.6
+FROM nginx:1.17.9
 
 WORKDIR /tmp
 
