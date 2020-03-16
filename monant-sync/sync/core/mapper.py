@@ -9,6 +9,7 @@ def map_article(article):
         title=article['title'],
         perex=article['perex'],
         body=article['body'],
+        raw_body=article['raw_body'],
         published_at=article['published_at'],
         extracted_at=article['extracted_at'],
         url=article['url'],
@@ -16,7 +17,8 @@ def map_article(article):
         media=list(map(map_media, [(article['id'], i)
                                    for i in article['media']])),
         category=article['category'],
-        other_info=article['other_info']
+        other_info=article['other_info'],
+        veracity=article['veracity']
     )
 
 
@@ -43,7 +45,7 @@ def map_source(source):
 def map_media(aid, media):
     return Media(
         id=media['id'],
-        aid=aid,
+        article_id=aid,
         caption=media['caption'],
         media_type=media.get('media_type', {}).get('name', None),
         url=media['url']

@@ -39,17 +39,18 @@ class Article(Base):
 
     fb_engagement = relationship('FacebookEngagement', uselist=False)
 
-    category = Column(Text)
-
+    category = Column(JSONB)
     other_info = Column(JSONB)
+    veracity = Column(Text)
 
-    def __init__(self, id, author, title, perex, body, published_at, extracted_at,
-                 url, source_id, media, category, other_info):
+    def __init__(self, id, author, title, perex, body, raw_body, published_at, extracted_at,
+                 url, source_id, media, category, other_info, veracity):
         self.id = id
         self.author = author
         self.title = title
         self.perex = perex
         self.body = body
+        self.raw_body = raw_body
         self.published_at = published_at
         self.extracted_at = extracted_at
         self.url = url
@@ -57,6 +58,7 @@ class Article(Base):
         self.media = media
         self.category = category
         self.other_info = other_info
+        self.veracity = veracity
 
 
 class Author(Base):
@@ -101,9 +103,9 @@ class Media(Base):
     caption = Column(Text)
     media_type = Column(Text)
 
-    def __init__(self, id, aid, caption, media_type, url):
+    def __init__(self, id, article_id, caption, media_type, url):
         self.id = id
-        self.article_id = aid
+        self.article_id = article_id
         self.caption = caption
         self.media_type = media_type,
         self.url = url
