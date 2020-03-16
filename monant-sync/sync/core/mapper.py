@@ -13,7 +13,8 @@ def map_article(article):
         extracted_at=article['extracted_at'],
         url=article['url'],
         source_id=source.id,
-        media=list(map(map_media, article['media'])),
+        media=list(map(map_media, [(article['id'], i)
+                                   for i in article['media']])),
         category=article['category'],
         other_info=article['other_info']
     )
@@ -29,6 +30,7 @@ def map_author(author, source):
         source_id=source.id
     )
 
+
 def map_source(source):
     return Source(
         id=source['id'],
@@ -38,9 +40,10 @@ def map_source(source):
     )
 
 
-def map_media(media):
+def map_media(aid, media):
     return Media(
         id=media['id'],
+        aid=aid,
         caption=media['caption'],
         media_type=media.get('media_type', {}).get('name', None),
         url=media['url']

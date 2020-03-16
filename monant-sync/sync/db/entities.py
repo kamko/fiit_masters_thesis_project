@@ -96,12 +96,14 @@ class Media(Base):
 
     id = Column(BigInteger, primary_key=True)
 
+    article_id = Column(BigInteger)
     url = Column(Text)
     caption = Column(Text)
     media_type = Column(Text)
 
-    def __init__(self, id, caption, media_type, url):
+    def __init__(self, id, aid, caption, media_type, url):
         self.id = id
+        self.article_id = aid
         self.caption = caption
         self.media_type = media_type,
         self.url = url
