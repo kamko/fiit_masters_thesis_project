@@ -25,6 +25,7 @@ class Article(Base):
     title = Column(Text)
     perex = Column(Text)
     body = Column(Text)
+    raw_body = Column(Text)
     published_at = Column(DateTime)
     extracted_at = Column(DateTime)
 
