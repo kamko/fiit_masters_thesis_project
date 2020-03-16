@@ -40,7 +40,7 @@ def init_database():
 @click.argument('entity')
 def fetch_all(entity):
     print(
-        f'[fetch_all] Starting downloading of all data for entity "{entity}"')
+        f'[fetch_all] Starting download of all data for entity "{entity}"')
     sync_fetch_all(monant_client(), entity)
     print('[fetch_all] finished')
 
@@ -51,7 +51,7 @@ def fetch_all(entity):
 @click.option('--max-count', required=True, type=int)
 def fetch_new(entity, last_id, max_count):
     print(
-        f'[fetch_new] Starting downloading of new data for entity "{entity}"')
+        f'[fetch_new] Starting download of new data for entity "{entity}"')
 
     if last_id == -1:
         print(f'[fetch_new] last_id set to -1 -> using last id in database')

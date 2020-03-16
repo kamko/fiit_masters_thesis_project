@@ -14,8 +14,7 @@ def map_article(article):
         extracted_at=article['extracted_at'],
         url=article['url'],
         source_id=source.id,
-        media=list(map(map_media, [(article['id'], i)
-                                   for i in article['media']])),
+        media=[map_media(article['id'], m) for m in article['media']],
         category=article['category'],
         other_info=article['other_info'],
         veracity=article['veracity']
