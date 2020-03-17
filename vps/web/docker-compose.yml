@@ -1,16 +1,36 @@
-version: '3'
+version: "3.7"
 services:
-  traefik-proxy:
-    image: traefik:v2.0.5
-    restart: unless-stopped
+  traefik:
+    image: traefik:v2.1.4
+    restart: always
+    command:
+      - "--accesslog=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--providers.docker.watch=true"
+      - "--entrypoints.http.address=:80"
+      - "--entrypoints.https.address=:443"
+      - "--certificatesresolvers.le-prod.acme.httpchallenge=true"
+      - "--certificatesresolvers.le-prod.acme.httpchallenge.entrypoint=http"
+      - "--certificatesresolvers.le-prod.acme.email=j@necek.com"
+      - "--certificatesresolvers.le-prod.acme.storage=/certs/acme.json"
     ports:
       - "80:80"
       - "443:443"
-    #      - "8080:8080" # traefik API port
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock # todo: use tcp
-      - ./traefik.toml:/traefik.toml # static startup configuration
-      - ./certs:/certs
+      - "./certs:/certs/"
+      # todo: vulnerable
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+
+      - "traefik.http.routers.http-catchall.entrypoints=http"
+      - "traefik.http.routers.http-catchall.rule=HostRegexp(`{host:.+}`)"
+
+      - "traefik.http.routers.http-catchall.middlewares=redirect-to-https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.redirect-to-https.redirectscheme.permanent=true"
 
   homepage:
     image: kamko/nginx-redirect
@@ -22,17 +42,9 @@ services:
     labels:
       - "traefik.enable=true"
 
-      - "traefik.http.routers.homepage.rule=Host(`dp.kamko.dev`)" # http endpoint
-      - "traefik.http.routers.homepage.entryPoints=web"
-
-      - "traefik.http.routers.homepage.middlewares=https_redirect" # http to https redirect
-      - "traefik.http.middlewares.https_redirect.redirectscheme.scheme=https"
-
-      - "traefik.http.routers.homepage_tls.rule=Host(`dp.kamko.dev`)" # https endpoint
-      - "traefik.http.routers.homepage_tls.entryPoints=websecure"
-      - "traefik.http.routers.homepage_tls.tls"
-
-      - "traefik.http.routers.homepage_tls.tls.certResolver=default"
+      - "traefik.http.routers.homepage.rule=Host(`dp.kamko.dev`)" # https endpoint
+      - "traefik.http.routers.homepage.entryPoints=https"
+      - "traefik.http.routers.homepage.tls.certresolver=le-prod"
 
   static-files:
     image: nginx:1.17.6
@@ -44,15 +56,6 @@ services:
     labels:
       - "traefik.enable=true"
 
-      - "traefik.http.routers.static-server.rule=Host(`static.dp.kamko.dev`)" # http endpoint
-      - "traefik.http.routers.static-server.entryPoints=web"
-
-      - "traefik.http.routers.static-server.middlewares=https_redirect" # http to https redirect
-      - "traefik.http.middlewares.https_redirect.redirectscheme.scheme=https"
-
-      - "traefik.http.routers.static-server_tls.rule=Host(`static.dp.kamko.dev`)" # https endpoint
-      - "traefik.http.routers.static-server_tls.entryPoints=websecure"
-      - "traefik.http.routers.static-server_tls.tls"
-
-      - "traefik.http.routers.static-server_tls.tls.certResolver=default"
-
+      - "traefik.http.routers.static-server.rule=Host(`static.dp.kamko.dev`)" # https endpoint
+      - "traefik.http.routers.static-server.entryPoints=https"
+      - "traefik.http.routers.static-server.tls.certresolver=le-prod"
