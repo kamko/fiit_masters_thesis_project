@@ -8,4 +8,5 @@ services:
     environment:
       POSTGRES_PASSWORD: kamkodp123
       POSTGRES_USER: kamko-dp
-      POSTGRES_DB: dp
+      POSTGRES_DB:
+    shm_size: 512mb
