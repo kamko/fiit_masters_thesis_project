@@ -31,10 +31,11 @@ class Pbar:
         
         output += f' -- {self.iteration} / {self.length}'
         
-        print('\r' + output, end='')
-               
         if self.iteration == self.length:
             print(' -- (finished)')
+            
+        print('\r' + output, end='')       
+
 
     def __iter__(self):
         return self
