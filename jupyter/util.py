@@ -71,3 +71,14 @@ def split_X_y_all(train, test, validation, selected_label, all_labels):
 
 def empty_features(df):
     return pd.DataFrame(index=df.index)
+
+
+def column_feature(df, colname):
+    return pd.DataFrame(df[colname], index=df.index, columns=[colname])
+
+
+def str_contains(where, what, case=True):
+    if case:
+        return what in where
+    else:
+        return what.casefold() in where.casefold()
