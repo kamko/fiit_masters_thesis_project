@@ -1,13 +1,12 @@
 import datetime as dt
-
-from .monant_sync import new_articles_iterator, sources_iterator
-from .mapper import map_article, map_engagement, map_source
-from db import run_action
-from db import session_scope, merge_if_not_none, get_engine
-from db import MonitoredArticle, MonitorJobRunLog
-from util import flatten_iterable, chunks
-
 from sqlalchemy import func
+
+from db import MonitoredArticle, MonitorJobRunLog
+from db import run_action
+from db import session_scope, merge_if_not_none
+from util import flatten_iterable, chunks
+from .mapper import map_article, map_engagement, map_source
+from .monant_sync import new_articles_iterator, sources_iterator
 
 date_threshold = dt.datetime(
     2019, 10, 21, 0, 0, 0, 0, tzinfo=dt.timezone(dt.timedelta(seconds=3600)))
@@ -40,7 +39,8 @@ def _fetch_new_articles(session, monant_client):
         article.author = merge_if_not_none(session, article.author)
         session.add(article)
 
-        if article.published_at is not None and dt.datetime.strptime(article.published_at, '%Y-%m-%dT%H:%M:%S.%f%z') > date_threshold:
+        if article.published_at is not None and dt.datetime.strptime(article.published_at,
+                                                                     '%Y-%m-%dT%H:%M:%S.%f%z') > date_threshold:
             res.append(article)
 
     return res
