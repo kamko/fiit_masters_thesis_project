@@ -119,7 +119,8 @@ def fetch_article_veracity(api_client):
     for i, batch in enumerate(iterable):
         print(f'[article-veracity] batch #{i}')
         with get_engine().begin() as engine:
-            engine.execute(insert(ArticleVeracity), [av.__dict__ for av in batch])
+            _insert = insert(ArticleVeracity).on_conflict_do_nothing()
+            engine.execute(_insert, [av.__dict__ for av in batch])
 
 
 def fetch_all_articles(api_client):
