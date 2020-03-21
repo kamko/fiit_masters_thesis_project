@@ -10,11 +10,16 @@ class ApiClient:
         self.auth = auth
         self.base_url = base_url
 
+        self._user_agent = 'kamko/monant-sync'
+
     def get(self, url, content_key=None, params=None):
         if params is None:
             params = {}
 
-        res = rq.get(self.base_url + url, params=params, auth=self.auth).json()
+        res = rq.get(self.base_url + url,
+                     params=params,
+                     auth=self.auth,
+                     headers={'user-agent': self._user_agent}).json()
 
         if content_key is not None:
             return res[content_key]
