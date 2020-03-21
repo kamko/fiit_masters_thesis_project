@@ -37,7 +37,8 @@ def map_source(source):
         id=source['id'],
         name=source['name'],
         url=source['url'],
-        stype=source.get('source_type', {}).get('name', None)
+        stype=source.get('source_type', {}).get('name', None),
+        veracity=source['veracity']
     )
 
 

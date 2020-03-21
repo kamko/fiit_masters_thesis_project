@@ -1,5 +1,5 @@
 import datetime
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import JSONB, insert
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 from sqlalchemy.schema import Column, ForeignKey, Table
@@ -75,6 +75,16 @@ class Author(Base):
         self.name = name
         self.source_id = source_id
 
+    @staticmethod
+    def upsert_query(index_elements=None):
+        if index_elements is None:
+            index_elements = ['id']
+
+        odo_insert = insert(Author)
+        return odo_insert.on_conflict_do_update(index_elements=index_elements, set_={
+            'name': odo_insert.excluded.name,
+            'source_id': odo_insert.excluded.source_id})
+
 
 class Source(Base):
     __tablename__ = 'source'
@@ -86,11 +96,26 @@ class Source(Base):
     stype = Column(Text)
     is_reliable = Column(Boolean)
 
-    def __init__(self, id, name, url, stype):
+    veracity = Column(Text)
+
+    def __init__(self, id, name, url, stype, veracity):
         self.id = id
         self.name = name
         self.url = url,
         self.stype = stype
+        self.veracity = veracity
+
+    @staticmethod
+    def upsert_query(index_elements=None):
+        if index_elements is None:
+            index_elements = ['id']
+
+        odo_insert = insert(Source)
+        return odo_insert.on_conflict_do_update(index_elements=index_elements, set_={
+            'name': odo_insert.excluded.name,
+            'url': odo_insert.excluded.url,
+            'stype': odo_insert.excluded.stype,
+            'is_reliable': odo_insert.excluded.is_reliable})
 
 
 class Media(Base):
@@ -186,3 +211,20 @@ class ArticleVeracity(Base):
         self.claims_mostly_true = claims['mostly-true']
         self.claims_true = claims['true']
         self.claims_unknown = claims['unknown']
+
+    @staticmethod
+    def upsert_query(index_elements=None):
+        if index_elements is None:
+            index_elements = ['article_id']
+
+        odo_insert = insert(ArticleVeracity)
+        return odo_insert.on_conflict_do_update(index_elements=index_elements, set_={
+            'article_id': odo_insert.excluded.article_id,
+            'veracity': odo_insert.excluded.veracity,
+            'claims_false': odo_insert.excluded.claims_false,
+            'claims_mixture': odo_insert.excluded.claims_mixture,
+            'claims_mostly_false': odo_insert.excluded.claims_mostly_false,
+            'claims_mostly_true': odo_insert.excluded.claims_mostly_true,
+            'claims_true': odo_insert.excluded.claims_true,
+            'claims_unknown': odo_insert.excluded.claims_unknown,
+        })

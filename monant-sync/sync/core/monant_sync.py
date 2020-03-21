@@ -1,5 +1,3 @@
-from sqlalchemy.dialects.postgresql import insert
-
 from db import session_scope, get_engine, Source
 from db.entities import ArticleVeracity
 from util import flatten_iterable, sleeping_iterable
@@ -49,7 +47,12 @@ def annotations_iterable(api_client,
 
 
 def sources_iterator(api_client):
-    yield api_client.get(url='v1/sources', content_key='sources')
+    return api_client.get_newest(
+        url='v1/sources',
+        content_key='sources',
+        size=100,
+        last_id=-1,
+        max_count=100000)
 
 
 def _save_all(batch, merge):
@@ -63,9 +66,12 @@ def _save_all(batch, merge):
 
 
 def fetch_all_sources(api_client):
-    with session_scope() as session:
-        for source in map(map_source, flatten_iterable(sources_iterator(api_client))):
-            session.merge(source)
+    for i, batch in enumerate(sources_iterator(api_client)):
+        print(f'[fetch-all-sources] batch #{i}')
+        batch = map(map_source, batch)
+        with get_engine().begin() as engine:
+            engine.execute(
+                Source.upsert_query(), [source.__dict__ for source in batch])
 
 
 def fetch_source_reliability(api_client):
@@ -119,8 +125,7 @@ def fetch_article_veracity(api_client):
     for i, batch in enumerate(iterable):
         print(f'[article-veracity] batch #{i}')
         with get_engine().begin() as engine:
-            _insert = insert(ArticleVeracity).on_conflict_do_nothing()
-            engine.execute(_insert, [av.__dict__ for av in batch])
+            engine.execute(ArticleVeracity.upsert_query(), [av.__dict__ for av in batch])
 
 
 def fetch_all_articles(api_client):
@@ -152,21 +157,10 @@ def fetch_new_articles(api_client, last_id, max_count):
         print(f'batch_no={i}')
         batch = [map_article(a) for a in batch]
         with get_engine().begin() as engine:
-            s_insert = insert(Source)
-            s_insert = s_insert.on_conflict_do_update(index_elements=['id'], set_={
-                'name': s_insert.excluded.name,
-                'url': s_insert.excluded.url,
-                'stype': s_insert.excluded.stype,
-                'is_reliable': s_insert.excluded.is_reliable})
             engine.execute(
-                s_insert, [art.source.__dict__ for art in batch if art.source is not None])
-
-            a_insert = insert(Author)
-            a_insert = a_insert.on_conflict_do_update(index_elements=['id'], set_={
-                'name': a_insert.excluded.name,
-                'source_id': a_insert.excluded.source_id})
+                Source.upsert_query(), [art.source.__dict__ for art in batch if art.source is not None])
             engine.execute(
-                a_insert, [art.author.__dict__ for art in batch if art.author is not None])
+                Author.upsert_query(), [art.author.__dict__ for art in batch if art.author is not None])
 
         _save_all(batch, merge=True)
 
