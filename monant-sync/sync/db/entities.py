@@ -1,10 +1,9 @@
 import datetime
-
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
 from sqlalchemy.schema import Column, ForeignKey, Table
 from sqlalchemy.types import Text, BigInteger, DateTime, Integer, Boolean
-from sqlalchemy.dialects.postgresql import JSONB
-from sqlalchemy.orm import relationship
-from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
@@ -160,3 +159,30 @@ class MonitorJobRunLog(Base):
         self.run_started = run_started
         self.run_finished = run_finished
         self.articles_processed = articles_processed
+
+
+class ArticleVeracity(Base):
+    __tablename__ = "article_veracity"
+
+    article_id = Column(BigInteger, ForeignKey('article.id'), primary_key=True)
+
+    veracity = Column(Text)
+
+    claims_false = Column(Integer)
+    claims_mixture = Column(Integer)
+    claims_mostly_false = Column(Integer)
+    claims_mostly_true = Column(Integer)
+    claims_true = Column(Integer)
+    claims_unknown = Column(Integer)
+
+    def __init__(self, article_id, veracity, claims):
+        self.article_id = article_id
+
+        self.veracity = veracity
+
+        self.claims_false = claims['false']
+        self.claims_mixture = claims['mixture']
+        self.claims_mostly_false = claims['mostly-false']
+        self.claims_mostly_true = claims['mostly-true']
+        self.claims_true = claims['true']
+        self.claims_unknown = claims['unknown']

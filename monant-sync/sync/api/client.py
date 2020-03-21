@@ -1,5 +1,6 @@
-import requests as rq
 import itertools
+import requests as rq
+
 from .auth import MonantAuth
 
 
@@ -44,13 +45,16 @@ class ApiClient:
             if until is not None and i >= until:
                 break
 
-    def get_newest(self, url, content_key, last_id, max_count, size=10):
-        i = 0
+    def get_newest(self, url, content_key, last_id, max_count, size=10, extra_params=None):
+        if extra_params is None:
+            extra_params = {}
 
+        i = 0
         while i < max_count:
             page = self.get(url, params={
                 'last_id': last_id,
-                'count': size
+                'count': size,
+                **extra_params
             })
 
             content = page[content_key]

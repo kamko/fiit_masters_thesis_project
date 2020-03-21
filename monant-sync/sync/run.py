@@ -1,17 +1,16 @@
 import os
+
 import click
 import schedule
 import time
+
 from api.client import create_client as monant_create_client
 from api.fb.graph_client import create_client as fb_create_client
+from core.fb_sync import sync_engagement as fb_get_engagement, find_last_id_with_engagement
+from core.monant_sync import fetch_new as sync_fetch_new
+from core.monitoring import run as monitor_run
 from db import create_all_tables, setup_db_engine
 from db import run_action as db_run_action
-from core.monant_sync import fetch_all as sync_fetch_all
-from core.monant_sync import fetch_source_reliability as sync_fetch_source_reliability
-from core.monant_sync import fetch_new as sync_fetch_new
-
-from core.fb_sync import sync_engagement as fb_get_engagement, find_last_id_with_engagement
-from core.monitoring import run as monitor_run
 
 db_engine = setup_db_engine(uri=os.environ['POSTGRESQL_URI'])
 
@@ -39,9 +38,10 @@ def init_database():
 @click.command()
 @click.argument('entity')
 def fetch_all(entity):
+    from core.monant_sync import fetch_all
     print(
         f'[fetch_all] Starting download of all data for entity "{entity}"')
-    sync_fetch_all(monant_client(), entity)
+    fetch_all(monant_client(), entity)
     print('[fetch_all] finished')
 
 
@@ -95,19 +95,25 @@ def monitor():
     print("[monitor] scheduler started!")
     schedule.every(2).hours.do(
         monitor_run, monant_client_provider=monant_client, fb_client_provider=fb_client)
-    
+
     schedule.run_all()
     while True:
         schedule.run_pending()
         time.sleep(1)
 
+
 @click.command()
 @click.argument('type')
 def annotation(type):
+    from core.monant_sync import fetch_source_reliability
+    from core.monant_sync import fetch_article_veracity
+
     print(f'[annotation] fetch annotations for type: {type}')
 
     if type == 'source-reliability':
-        sync_fetch_source_reliability(monant_client())
+        fetch_source_reliability(monant_client())
+    elif type == 'article-veracity':
+        fetch_article_veracity(monant_client())
     else:
         print(f'[annotation] Unknown-type {type} - ignoring')
 
