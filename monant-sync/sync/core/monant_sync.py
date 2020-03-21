@@ -1,3 +1,5 @@
+from sqlalchemy.dialects.postgresql import insert
+
 from db import session_scope, get_engine, Source
 from db.entities import ArticleVeracity
 from util import flatten_iterable, sleeping_iterable
@@ -158,7 +160,7 @@ def fetch_new_articles(api_client, last_id, max_count):
         batch = [map_article(a) for a in batch]
         with get_engine().begin() as engine:
             engine.execute(
-                Source.upsert_query(), [art.source.__dict__ for art in batch if art.source is not None])
+                insert(Source).on_conflict_do_nothing(), [art.source.__dict__ for art in batch if art.source is not None])
             engine.execute(
                 Author.upsert_query(), [art.author.__dict__ for art in batch if art.author is not None])
 
