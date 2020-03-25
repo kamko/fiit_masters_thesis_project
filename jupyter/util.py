@@ -54,7 +54,7 @@ def split_X_y(df, selected_label, all_labels):
     return AttrDict.from_dict(
         {
             'X': X,
-            'y': y
+            'y': pd.to_numeric(y)
         }
     )
 
