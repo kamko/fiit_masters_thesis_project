@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 
+from common import display_all
+
 
 class AttrDict(dict):
     def __init__(self, *args, **kwargs):
@@ -49,14 +51,22 @@ def prefix_sums(arr):
 
 def split_X_y(df, selected_label, all_labels):
     X = df.copy().drop(columns=all_labels)
+    y_all = df[all_labels].copy().apply(pd.to_numeric, axis=0)
     y = df.copy()[selected_label]
 
-    return AttrDict.from_dict(
+    res = AttrDict.from_dict(
         {
             'X': X,
-            'y': pd.to_numeric(y)
-        }
-    )
+            'y': y,
+            'y_all': y_all
+        })
+
+    def switch_label(label):
+        res.y = res.y_all[label]
+
+    res.switch_label = switch_label
+
+    return res
 
 
 def split_X_y_all(train, test, validation, selected_label, all_labels):
@@ -82,3 +92,12 @@ def str_contains(where, what, case=True):
         return what in where
     else:
         return what.casefold() in where.casefold()
+
+
+def show_importances(clf, cols):
+    if hasattr(clf, 'feature_importances_'):
+        print(f'Classifier {clf.__class__.__name__} does not contain feature importance data')
+        return
+
+    display_all(pd.DataFrame((i for i in clf.feature_importances_), index=cols,
+                             columns=['importance']).sort_values(by=['importance'], ascending=False))
