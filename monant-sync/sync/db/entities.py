@@ -1,4 +1,5 @@
 import datetime
+
 from sqlalchemy.dialects.postgresql import JSONB, insert
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
@@ -43,8 +44,11 @@ class Article(Base):
     other_info = Column(JSONB)
     veracity = Column(Text)
 
+    monitor_name = Column(Text)
+    monitor_id = Column(BigInteger)
+
     def __init__(self, id, author, title, perex, body, raw_body, published_at, extracted_at,
-                 url, source_id, media, category, other_info, veracity):
+                 url, source_id, media, category, other_info, veracity, monitor_name, monitor_id):
         self.id = id
         self.author = author
         self.title = title
@@ -59,6 +63,8 @@ class Article(Base):
         self.category = category
         self.other_info = other_info
         self.veracity = veracity
+        self.monitor_id = monitor_id
+        self.monitor_name = monitor_name
 
 
 class Author(Base):

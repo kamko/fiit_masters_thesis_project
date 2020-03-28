@@ -17,7 +17,9 @@ def map_article(article):
         media=[map_media(article['id'], m) for m in article['media']],
         category=article['category'],
         other_info=article['other_info'],
-        veracity=article['veracity']
+        veracity=article['veracity'],
+        monitor_id=article['monitor_id'],
+        monitor_name=article['monitor_name']
     )
 
 
