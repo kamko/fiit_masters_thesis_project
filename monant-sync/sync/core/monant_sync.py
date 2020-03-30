@@ -1,3 +1,4 @@
+from sqlalchemy import update
 from sqlalchemy.dialects.postgresql import insert
 
 from db import session_scope, get_engine, Source
@@ -94,17 +95,15 @@ def fetch_source_reliability(api_client):
                                     method='Expert-based source reliability evaluation',
                                     extractor=extractor)
 
-    with session_scope() as session:
-        for i in iterable:
-            source_id, value = i
+    with get_engine().begin() as engine:
+        for i, id_val in enumerate(iterable):
+            print(f'[source-relability] batch #{i}')
+            id, val = id_val
 
-            source = session.query(Source) \
-                .filter(Source.id == source_id) \
-                .one()
-
-            source.is_reliable = value
-
-            session.merge(source)
+            update_query = update(Source) \
+                .where(Source.id == id) \
+                .values(is_reliable=val)
+            engine.execute(update_query)
 
 
 def fetch_article_veracity(api_client):
