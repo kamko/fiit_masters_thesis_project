@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from pbar import Pbar
 
 from common import display_all
 
@@ -62,7 +63,7 @@ def split_X_y(df, selected_label, all_labels):
         })
 
     def switch_label(label):
-        res.y = res.y_all[label]
+        res.y = pd.to_numeric(res.y_all[label])
 
     res.switch_label = switch_label
 
